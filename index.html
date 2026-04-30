@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FoodSpot - Trova il locale perfetto vicino a te</title>
+  <meta name="description" content="Scopri ristoranti, bar, gelaterie e pasticcerie. Ricerca intelligente, recensioni vere, vicino a te." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <header class="topbar" role="banner">
+      <button class="logo" data-route="#home" aria-label="FoodSpot Home">
+        <svg class="logo-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#ff8f3d" />
+              <stop offset="100%" style="stop-color:#ff6b00" />
+            </linearGradient>
+          </defs>
+          <path d="M20 4C14.48 4 10 8.48 10 14C10 21 20 36 20 36C20 36 30 21 30 14C30 8.48 25.52 4 20 4Z" fill="url(#logoGrad)"/>
+          <path d="M18 14V11M20 14V10M22 14V11M18 14V24C18 25.1 18.9 26 20 26C21.1 26 22 25.1 22 24V14" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="20" cy="14" r="3" fill="#fff"/>
+        </svg>
+        <div class="logo-text">
+          <strong>FoodSpot</strong>
+          <span>Scopri. Gusta. Torna.</span>
+        </div>
+      </button>
+
+      <nav class="topbar-actions" role="navigation" aria-label="Menu principale">
+        <button class="nav-link active" data-route="#home">Home</button>
+        <button class="nav-link" data-route="#search">Cerca</button>
+        <button class="nav-link" data-route="#favorites">❤️ Preferiti</button>
+        <button class="nav-link" data-route="#nearby">Vicino</button>
+      </nav>
+
+      <button class="app-menu-btn" id="app-menu-btn" aria-label="Apri menu app">
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </button>
+
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Apri menu mobile" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <nav class="mobile-nav" id="mobile-nav" role="navigation" aria-label="Menu mobile">
+      <button class="nav-link-mobile active" data-route="#home">🏠 Home</button>
+      <button class="nav-link-mobile" data-route="#search">🔍 Cerca</button>
+      <button class="nav-link-mobile" data-route="#favorites">❤️ Preferiti</button>
+      <button class="nav-link-mobile" data-route="#nearby">📍 Vicino a te</button>
+      <button class="nav-link-mobile" data-route="#toprated">⭐ Top Rated</button>
+      <button class="nav-link-mobile" data-route="#categories">🍝 Categorie</button>
+      <button class="nav-link-mobile" data-route="#ideas">💡 Idee</button>
+    </nav>
+
+    <main id="app" role="main">
+
+      <!-- HOME -->
+      <section class="view active" id="view-home" aria-labelledby="home-title">
+        <div class="hero-home">
+          <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&h=800&fit=crop&fm=webp&q=80"
+            alt="Tavolo apparecchiato in ristorante" class="hero-home-img" loading="eager" />
+          <div class="hero-home-overlay"></div>
+          <div class="hero-home-content">
+            <p class="eyebrow-hero">Scopri il gusto</p>
+            <h1 id="home-title">Il locale perfetto, a portata di tap</h1>
+            <p>Cerca per atmosfera, cucina o occasione. FoodSpot ti porta dove vuoi essere.</p>
+            <div class="hero-actions">
+              <button class="hero-cta" data-route="#search">Inizia la ricerca →</button>
+              <button class="hero-cta-ghost" data-route="#nearby">📍 Vicino a me</button>
+            </div>
+          </div>
+        </div>
+
+        <section class="section-block">
+          <div class="section-header">
+            <div><p class="section-kicker">Esplora</p><h2>Categorie popolari</h2></div>
+          </div>
+          <div class="category-grid" id="home-categories" role="list"></div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-header">
+            <div><p class="section-kicker">Ispirazione</p><h2>Idee per oggi</h2></div>
+          </div>
+          <div class="ideas-grid" id="home-ideas"></div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-header">
+            <div><p class="section-kicker">Consigliati</p><h2>Scelti per te</h2></div>
+            <button class="text-button" data-route="#toprated">Top Rated →</button>
+          </div>
+          <div class="horizontal-cards" id="recommended-list" role="list"></div>
+        </section>
+      </section>
+
+      <!-- SEARCH -->
+      <section class="view" id="view-search" aria-labelledby="search-title">
+        <h2 id="search-title" class="visually-hidden">Cerca locali</h2>
+        <div class="search-panel">
+          <label class="input-group input-group-wide">
+            <span class="input-icon">🔍</span>
+            <input type="text" id="results-search-input" placeholder="Romantico, brunch, economico..." aria-label="Cerca locale" autocomplete="off" />
+          </label>
+          <div class="filter-row">
+            <div class="chip-row" id="search-categories" role="listbox" aria-label="Filtra per categoria"></div>
+            <label class="select-wrap">
+              <span>Prezzo</span>
+              <select id="price-filter" aria-label="Filtra per prezzo">
+                <option value="all">Tutti</option>
+                <option value="€">€</option>
+                <option value="€€">€€</option>
+                <option value="€€€">€€€</option>
+              </select>
+            </label>
+            <label class="select-wrap">
+              <span>Rating</span>
+              <select id="rating-filter" aria-label="Filtra per rating minimo">
+                <option value="0">Tutti</option>
+                <option value="3.5">3.5+</option>
+                <option value="4">4.0+</option>
+                <option value="4.5">4.5+</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="search-header">
+          <h2>Risultati</h2>
+          <p class="search-summary" id="results-summary" role="status" aria-live="polite"></p>
+        </div>
+        <div class="results-list" id="results-list" role="list"></div>
+      </section>
+
+      <!-- FAVORITES -->
+      <section class="view" id="view-favorites" aria-labelledby="favorites-title">
+        <div class="search-header">
+          <h2 id="favorites-title">❤️ I tuoi preferiti</h2>
+          <p class="search-summary" id="favorites-summary" role="status" aria-live="polite"></p>
+        </div>
+        <div class="results-list" id="favorites-list" role="list"></div>
+      </section>
+
+      <!-- NEARBY -->
+      <section class="view" id="view-nearby" aria-labelledby="nearby-title">
+        <div class="search-header">
+          <h2 id="nearby-title">📍 Vicino a te</h2>
+          <button class="secondary-button" id="refresh-location-btn">🔄 Aggiorna posizione</button>
+        </div>
+        <div class="results-list" id="nearby-view-list" role="list"></div>
+      </section>
+
+      <!-- TOP RATED -->
+      <section class="view" id="view-toprated" aria-labelledby="toprated-title">
+        <div class="search-header">
+          <h2 id="toprated-title">⭐ Top Rated</h2>
+        </div>
+        <div class="results-list" id="toprated-list" role="list"></div>
+      </section>
+
+      <!-- CATEGORIES -->
+      <section class="view" id="view-categories" aria-labelledby="categories-title">
+        <div class="search-header">
+          <h2 id="categories-title">🍝 Categorie</h2>
+        </div>
+        <div class="category-grid" id="all-categories" role="list"></div>
+        <div class="results-list" id="category-results" role="list" style="margin-top:24px;"></div>
+      </section>
+
+      <!-- IDEAS -->
+      <section class="view" id="view-ideas" aria-labelledby="ideas-title">
+        <div class="section-block">
+          <div class="section-header">
+            <div><p class="section-kicker">Ispirati</p><h2 id="ideas-title">💡 Idee per stasera</h2></div>
+          </div>
+          <div class="ideas-grid" id="all-ideas"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- APP MENU OVERLAY -->
+  <div class="app-menu-overlay" id="app-menu-overlay" role="dialog" aria-labelledby="app-menu-title" aria-modal="true">
+    <div class="app-menu-panel">
+      <div class="app-menu-header">
+        <h2 id="app-menu-title">FoodSpot</h2>
+        <button class="close-menu-btn" id="close-menu-btn" aria-label="Chiudi menu">✕</button>
+      </div>
+      <div class="app-grid" role="list">
+        <button class="app-tile" data-route="#home"><span class="app-icon">🏠</span><strong>Home</strong><span>Scopri</span></button>
+        <button class="app-tile" data-route="#search"><span class="app-icon">🔍</span><strong>Cerca</strong><span>Trova locale</span></button>
+        <button class="app-tile" data-route="#favorites"><span class="app-icon">❤️</span><strong>Preferiti</strong><span>Salvati</span></button>
+        <button class="app-tile" data-route="#nearby"><span class="app-icon">📍</span><strong>Vicino</strong><span>Intorno a te</span></button>
+        <button class="app-tile" data-route="#toprated"><span class="app-icon">⭐</span><strong>Top Rated</strong><span>I migliori</span></button>
+        <button class="app-tile" data-route="#categories"><span class="app-icon">🍝</span><strong>Categorie</strong><span>Tutte</span></button>
+        <button class="app-tile" data-route="#ideas"><span class="app-icon">💡</span><strong>Idee</strong><span>Ispirati</span></button>
+        <button class="app-tile app-tile-soon" disabled><span class="app-icon">🗺️</span><strong>Mappa</strong><span>Esplora</span></button>
+        <button class="app-tile app-tile-soon" disabled><span class="app-icon">👤</span><strong>Profilo</strong><span>Account</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <div class="modal hidden" id="detail-modal" role="dialog" aria-labelledby="detail-name" aria-modal="true" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="true"></div>
+    <div class="modal-panel">
+      <button class="modal-close" id="close-modal" aria-label="Chiudi dettaglio">✕</button>
+      <div class="detail-hero" id="detail-hero">
+        <div class="detail-hero-content">
+          <span class="detail-hero-badge" id="detail-hero-category"></span>
+          <h2 id="detail-hero-name"></h2>
+          <span class="detail-hero-rating" id="detail-hero-rating"></span>
+        </div>
+      </div>
+      <div class="detail-content">
+        <div class="detail-heading">
+          <div>
+            <span class="category-badge" id="detail-category"></span>
+            <h3 id="detail-name"></h3>
+          </div>
+          <div id="detail-rating" class="detail-rating"></div>
+        </div>
+        <p class="detail-description" id="detail-description"></p>
+        <div class="detail-info-grid">
+          <div class="info-card"><span class="info-label">📍 Indirizzo</span><p id="detail-address"></p></div>
+          <div class="info-card"><span class="info-label">🕐 Orari</span><p id="detail-hours"></p></div>
+          <div class="info-card"><span class="info-label">📞 Telefono</span><p id="detail-phone"></p></div>
+        </div>
+        <div>
+          <div class="section-header compact"><div><p class="section-kicker">Atmosfera</p><h4>Galleria</h4></div></div>
+          <div class="gallery-grid" id="detail-gallery"></div>
+        </div>
+        <div>
+          <div class="section-header compact"><div><p class="section-kicker">Cosa dicono</p><h4>Recensioni</h4></div></div>
+          <div class="reviews-list" id="detail-reviews"></div>
+        </div>
+        <div class="detail-actions">
+          <button class="primary-button" id="btn-menu">🍽️ Vedi Menu</button>
+          <button class="secondary-button" id="btn-sito">🌐 Sito Web</button>
+          <button class="ghost-button" id="btn-condividi">📤 Condividi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
