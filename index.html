@@ -91,33 +91,29 @@
     }
   </style>
 </section>
-              <button class="hero-cta" data-route="#search">Inizia la ricerca →</button>
-              <button class="hero-cta-ghost" data-route="#nearby">📍 Vicino a me</button>
-            </div>
+             <button class="hero-cta" data-route="#search">Inizia la ricerca</button>
+<button class="hero-cta-ghost" data-route="#nearby">Vicino a me</button>
           </div>
         </div>
 
-        <section class="section-block">
-          <div class="section-header">
-            <div><p class="section-kicker">Esplora</p><h2>Categorie popolari</h2></div>
-          </div>
-          <div class="category-grid" id="home-categories" role="list"></div>
-        </section>
+        <section style="background: #0f051a; padding: 60px 20px 40px; display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto;">
+  
+  <div onclick="location.hash='#search'" style="background: linear-gradient(135deg, #2d1b4e 0%, #1a0b2e 100%); border: 2px solid rgba(255,140,0,0.4); border-radius: 24px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); cursor: pointer;">
+    <p style="font-size: 12px; font-weight: 900; color: #FF8C00; letter-spacing: 2px; margin: 0 0 8px;">ESPLORA</p>
+    <h3 style="font-size: 26px; font-weight: 900; background: linear-gradient(180deg, #FFB347 0%, #FF8C00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; filter: drop-shadow(1px 1px 0px #cc5500);">Categorie popolari</h3>
+  </div>
 
-        <section class="section-block">
-          <div class="section-header">
-            <div><p class="section-kicker">Ispirazione</p><h2>Idee per oggi</h2></div>
-          </div>
-          <div class="ideas-grid" id="home-ideas"></div>
-        </section>
+  <div onclick="location.hash='#search'" style="background: linear-gradient(135deg, #2d1b4e 0%, #1a0b2e 100%); border: 2px solid rgba(255,140,0,0.4); border-radius: 24px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); cursor: pointer;">
+    <p style="font-size: 12px; font-weight: 900; color: #FF8C00; letter-spacing: 2px; margin: 0 0 8px;">ISPIRAZIONE</p>
+    <h3 style="font-size: 26px; font-weight: 900; background: linear-gradient(180deg, #FFB347 0%, #FF8C00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; filter: drop-shadow(1px 1px 0px #cc5500);">Idee per oggi</h3>
+  </div>
 
-        <section class="section-block">
-          <div class="section-header">
-            <div><p class="section-kicker">Consigliati</p><h2>Scelti per te</h2></div>
-            <button class="text-button" data-route="#toprated">Top Rated →</button>
-          </div>
-          <div class="horizontal-cards" id="recommended-list" role="list"></div>
-        </section>
+  <div onclick="location.hash='#toprated'" style="background: linear-gradient(135deg, #2d1b4e 0%, #1a0b2e 100%); border: 2px solid rgba(255,140,0,0.4); border-radius: 24px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); cursor: pointer;">
+    <p style="font-size: 12px; font-weight: 900; color: #FF8C00; letter-spacing: 2px; margin: 0 0 8px;">CONSIGLIATI</p>
+    <h3 style="font-size: 26px; font-weight: 900; background: linear-gradient(180deg, #FFB347 0%, #FF8C00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; filter: drop-shadow(1px 1px 0px #cc5500);">Scelti per te</h3>
+  </div>
+
+</section>
       </section>
 
       <!-- SEARCH -->
