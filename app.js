@@ -1787,37 +1787,4 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   });
 
-  // 4. Funzione cerca
-  function cerca() {
-    const citta = input.value.toLowerCase().trim();
-    if(citta.length < 2) {
-      resultsList.innerHTML = '';
-      if(summary) summary.textContent = '';
-      return;
-    }
-
-    const dati = DB[citta] || DB['modena'];
-    const lista = dati[filtro] || [];
-
-    if(summary) summary.textContent = `${lista.length} risultati per ${filtro} a ${citta.charAt(0).toUpperCase()+citta.slice(1)}`;
-
-    resultsList.innerHTML = lista.map(p => `
-      <div role="listitem" style="background:linear-gradient(135deg,#2d1b4e,#1a0b2e); border:1px solid rgba(255,140,0,0.3); border-radius:16px; padding:18px; margin-bottom:12px; cursor:pointer; transition:0.2s;" onmouseover="this.style.borderColor='#FF8C00'" onmouseout="this.style.borderColor='rgba(255,140,0,0.3)'">
-        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
-          <h3 style="color:#FFB347; font-size:18px; margin:0; font-weight:700;">${p.n}</h3>
-          <span style="background:rgba(255,215,0,0.2); color:#FFD700; padding:4px 10px; border-radius:12px; font-size:13px; font-weight:700;">★ ${p.v}</span>
-        </div>
-        <p style="color:#c9a86b; margin:0 0 6px; font-size:14px;">${p.d}</p>
-        <span style="color:#888; font-size:12px;">${p.p} · ${citta.charAt(0).toUpperCase()+citta.slice(1)}</span>
-      </div>
-    `).join('');
-  }
-
-  // 5. Avvia ricerca su INVIO o mentre scrivi
-  input.addEventListener('input', () => {
-    if(input.value.length > 2) cerca();
-  });
-  input.addEventListener('keyup', e => {
-    if(e.key === 'Enter') cerca();
-  });
-});
+  
