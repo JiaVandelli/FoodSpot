@@ -321,7 +321,7 @@ window.addEventListener('load', function() {
     if(c.length<2){list.innerHTML='';sum.textContent='';return;}
     const d=DB[c]||DB.modena, l=d[filtro]||[];
     sum.textContent=l.length+' risultati per '+filtro+' a '+c;
-    list.innerHTML=l.map(p=>`<div style="background:#2d1b4e;border:1px solid #FF8C00;padding16px;border-radius:14px;margin:10px 0"><b style="color:#FFB347">${p.n}</b> <span style="float:right;color:gold">★${p.v}</span><br><span style="color:#aaa;font-size:13px">${p.d}</span></div>`).join('');
+    list.innerHTML=l.map(p=>`<div style="background:#2d1b4e;border:1px solid #FF8C00;padding:16px;border-radius:14px;margin:10px 0"><b style="color:#FFB347">${p.n}</b> <span style="float:right;color:gold">★${p.v}</span><br><span style="color:#aaa;font-size:13px">${p.d}</span></div>`).join('');
   }
   
   input.oninput=()=>{if(input.value.length>2)cerca()};
