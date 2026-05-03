@@ -289,14 +289,14 @@
   <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js" defer></script>
 <script>
-// ORBO - RICERCA CITTÀ (versione pulita)
+// ORBO - RICERCA CITTÀ
 window.addEventListener('load', function() {
   const input = document.getElementById('results-search-input');
   const catRow = document.getElementById('search-categories');
   const list = document.getElementById('results-list');
   const sum = document.getElementById('results-summary');
   
-  if(!input) return;
+  if(!input || !catRow || !list) return;
   
   input.placeholder = 'Scrivi una città... Modena';
   input.value = '';
@@ -313,7 +313,13 @@ window.addEventListener('load', function() {
   catRow.innerHTML = cats.map(c=>`<button data-f="${c[0]}" style="padding:8px 14px;margin:4px;border-radius:12px;background:${c[0]===filtro?'#FF8C00':'transparent'};color:${c[0]===filtro?'#000':'#FFB347'};border:1px solid #FF8C00;font-weight:600">${c[1]} ${c[0]}</button>`).join('');
   
   catRow.onclick = e => {
-    if(e.target.dataset.f){ filtro=e.target.dataset.f; [...catRow.children].forEach(b=>{b.style.background='transparent';b.style.color='#FFB347'}); e.target.style.background='#FF8C00'; e.target.style.color='#000'; cerca(); }
+    if(e.target.dataset.f){ 
+      filtro=e.target.dataset.f; 
+      [...catRow.children].forEach(b=>{b.style.background='transparent';b.style.color='#FFB347'}); 
+      e.target.style.background='#FF8C00'; 
+      e.target.style.color='#000'; 
+      cerca(); 
+    }
   };
   
   function cerca(){
@@ -327,7 +333,6 @@ window.addEventListener('load', function() {
   input.oninput=()=>{if(input.value.length>2)cerca()};
   input.onkeyup=e=>{if(e.key==='Enter')cerca()};
   
-  // test
   console.log('✅ Orbo city search caricato');
 });
 </script>
