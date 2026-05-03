@@ -1707,3 +1707,117 @@ document.addEventListener('DOMContentLoaded', () => {
   }); 
 
 });
+// ===== ORBO RICERCA PER CITTÀ - by Meta AI =====
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('results-search-input');
+  const catRow = document.getElementById('search-categories');
+  const resultsList = document.getElementById('results-list');
+  const summary = document.getElementById('results-summary');
+
+  if(!input ||!catRow ||!resultsList) return;
+
+  // 1. Cambia placeholder
+  input.placeholder = 'Scrivi una città... es. Modena, Bologna';
+
+  // 2. Database finto (poi mettiamo API vera)
+  const DB = {
+    modena: {
+      ristoranti: [
+        {n:"Osteria Francescana", v:4.9, d:"3 stelle Michelin", p:"€€€"},
+        {n:"Trattoria Aldina", v:4.7, d:"Tortellini top", p:"€€"},
+        {n:"Da Enzo", v:4.6, d:"Cucina tipica modenese", p:"€€"}
+      ],
+      dolci: [
+        {n:"Gelateria Bloom", v:4.8, d:"Pistacchio di Bronte", p:"€"},
+        {n:"K2", v:4.6, d:"Crema artigianale", p:"€"},
+        {n:"Capolinea", v:4.7, d:"Gelato naturale", p:"€"}
+      ],
+      bar: [
+        {n:"Caffè Concerto", v:4.5, d:"Piazza Grande", p:"€€"},
+        {n:"Fly", v:4.4, d:"Cocktail bar", p:"€€"}
+      ],
+      pasticcerie: [
+        {n:"Gollini 1888", v:4.9, d:"Panettone storico", p:"€€"},
+        {n:"Emilio", v:4.7, d:"Amaretti", p:"€"}
+      ]
+    },
+    bologna: {
+      ristoranti: [
+        {n:"Trattoria Anna Maria", v:4.8, d:"Tagliatelle al ragù", p:"€€"},
+        {n:"Oltre", v:4.7, d:"Cucina moderna", p:"€€€"}
+      ],
+      dolci: [
+        {n:"Cremeria Cavour", v:4.9, d:"Dal 1947", p:"€"},
+        {n:"Stefino", v:4.8, d:"Cioccolato", p:"€€"}
+      ],
+      bar: [{n:"Camera con Vista", v:4.8, d:"Vista torri", p:"€€"}],
+      pasticcerie: [{n:"Gamberini", v:4.8, d:"Dal 1907", p:"€€"}]
+    },
+    milano: {
+      ristoranti: [{n:"Cracco", v:4.8, d:"Galleria", p:"€€€"}],
+      dolci: [{n:"Gelateria della Musica", v:4.9, d:"Top Italia", p:"€€"}],
+      bar: [{n:"Camparino", v:4.8, d:"Duomo", p:"€€€"}],
+      pasticcerie: [{n:"Marchesi", v:4.9, d:"Prada", p:"€€€"}]
+    }
+  };
+
+  // 3. Crea le 4 categorie
+  const cats = [
+    {id:'ristoranti', label:'🍝 Ristoranti'},
+    {id:'dolci', label:'🍦 Dolci'},
+    {id:'bar', label:'🍷 Bar'},
+    {id:'pasticcerie', label:'🥐 Pasticcerie'}
+  ];
+  let filtro = 'ristoranti';
+
+  catRow.innerHTML = cats.map(c =>
+    `<button class="chip" data-cat="${c.id}" style="padding:8px 14px; margin:4px; border-radius:12px; background:${c.id===filtro?'#FF8C00':'transparent'}; color:${c.id===filtro?'#1a0b2e':'#FFB347'}; border:1px solid #FF8C00; cursor:pointer; font-weight:600; transition:0.2s;">${c.label}</button>`
+  ).join('');
+
+  catRow.querySelectorAll('button').forEach(btn => {
+    btn.onclick = () => {
+      filtro = btn.dataset.cat;
+      catRow.querySelectorAll('button').forEach(b => {
+        b.style.background = 'transparent';
+        b.style.color = '#FFB347';
+      });
+      btn.style.background = '#FF8C00';
+      btn.style.color = '#1a0b2e';
+      cerca();
+    };
+  });
+
+  // 4. Funzione cerca
+  function cerca() {
+    const citta = input.value.toLowerCase().trim();
+    if(citta.length < 2) {
+      resultsList.innerHTML = '';
+      if(summary) summary.textContent = '';
+      return;
+    }
+
+    const dati = DB[citta] || DB['modena'];
+    const lista = dati[filtro] || [];
+
+    if(summary) summary.textContent = `${lista.length} risultati per ${filtro} a ${citta.charAt(0).toUpperCase()+citta.slice(1)}`;
+
+    resultsList.innerHTML = lista.map(p => `
+      <div role="listitem" style="background:linear-gradient(135deg,#2d1b4e,#1a0b2e); border:1px solid rgba(255,140,0,0.3); border-radius:16px; padding:18px; margin-bottom:12px; cursor:pointer; transition:0.2s;" onmouseover="this.style.borderColor='#FF8C00'" onmouseout="this.style.borderColor='rgba(255,140,0,0.3)'">
+        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
+          <h3 style="color:#FFB347; font-size:18px; margin:0; font-weight:700;">${p.n}</h3>
+          <span style="background:rgba(255,215,0,0.2); color:#FFD700; padding:4px 10px; border-radius:12px; font-size:13px; font-weight:700;">★ ${p.v}</span>
+        </div>
+        <p style="color:#c9a86b; margin:0 0 6px; font-size:14px;">${p.d}</p>
+        <span style="color:#888; font-size:12px;">${p.p} · ${citta.charAt(0).toUpperCase()+citta.slice(1)}</span>
+      </div>
+    `).join('');
+  }
+
+  // 5. Avvia ricerca su INVIO o mentre scrivi
+  input.addEventListener('input', () => {
+    if(input.value.length > 2) cerca();
+  });
+  input.addEventListener('keyup', e => {
+    if(e.key === 'Enter') cerca();
+  });
+});
