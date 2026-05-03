@@ -288,5 +288,48 @@
 
   <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js" defer></script>
+<script>
+// ORBO - RICERCA CITTÀ (versione pulita)
+window.addEventListener('load', function() {
+  const input = document.getElementById('results-search-input');
+  const catRow = document.getElementById('search-categories');
+  const list = document.getElementById('results-list');
+  const sum = document.getElementById('results-summary');
+  
+  if(!input) return;
+  
+  input.placeholder = 'Scrivi una città... Modena';
+  input.value = '';
+  
+  const DB = {
+    modena:{ristoranti:[{n:'Osteria Francescana',v:4.9,d:'3 stelle'},{n:'Trattoria Aldina',v:4.7,d:'Tortellini'},{n:'Da Enzo',v:4.6,d:'Tipica'}],dolci:[{n:'Bloom',v:4.8,d:'Pistacchio'},{n:'K2',v:4.6,d:'Crema'}],bar:[{n:'Caffè Concerto',v:4.5,d:'Piazza Grande'}],pasticcerie:[{n:'Gollini',v:4.9,d:'Dal 1888'}]},
+    bologna:{ristoranti:[{n:'Anna Maria',v:4.8,d:'Tagliatelle'},{n:'Oltre',v:4.7,d:'Moderna'}],dolci:[{n:'Cremeria Cavour',v:4.9,d:'Dal 1947'}],bar:[{n:'Camera con Vista',v:4.8,d:'Torri'}],pasticcerie:[{n:'Gamberini',v:4.8,d:'1907'}]},
+    milano:{ristoranti:[{n:'Cracco',v:4.8,d:'Galleria'}],dolci:[{n:'Della Musica',v:4.9,d:'Top'}],bar:[{n:'Camparino',v:4.8,d:'Duomo'}],pasticcerie:[{n:'Marchesi',v:4.9,d:'Prada'}]}
+  };
+  
+  let filtro='ristoranti';
+  const cats=[['ristoranti','🍝'],['dolci','🍦'],['bar','🍷'],['pasticcerie','🥐']];
+  
+  catRow.innerHTML = cats.map(c=>`<button data-f="${c[0]}" style="padding:8px 14px;margin:4px;border-radius:12px;background:${c[0]===filtro?'#FF8C00':'transparent'};color:${c[0]===filtro?'#000':'#FFB347'};border:1px solid #FF8C00;font-weight:600">${c[1]} ${c[0]}</button>`).join('');
+  
+  catRow.onclick = e => {
+    if(e.target.dataset.f){ filtro=e.target.dataset.f; [...catRow.children].forEach(b=>{b.style.background='transparent';b.style.color='#FFB347'}); e.target.style.background='#FF8C00'; e.target.style.color='#000'; cerca(); }
+  };
+  
+  function cerca(){
+    const c=input.value.toLowerCase().trim();
+    if(c.length<2){list.innerHTML='';sum.textContent='';return;}
+    const d=DB[c]||DB.modena, l=d[filtro]||[];
+    sum.textContent=l.length+' risultati per '+filtro+' a '+c;
+    list.innerHTML=l.map(p=>`<div style="background:#2d1b4e;border:1px solid #FF8C00;padding16px;border-radius:14px;margin:10px 0"><b style="color:#FFB347">${p.n}</b> <span style="float:right;color:gold">★${p.v}</span><br><span style="color:#aaa;font-size:13px">${p.d}</span></div>`).join('');
+  }
+  
+  input.oninput=()=>{if(input.value.length>2)cerca()};
+  input.onkeyup=e=>{if(e.key==='Enter')cerca()};
+  
+  // test
+  console.log('✅ Orbo city search caricato');
+});
+</script>
 </body>
 </html>
