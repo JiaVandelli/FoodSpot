@@ -2,201 +2,746 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Orbo - Il gusto ti orbita</title>
-
-  <link rel="stylesheet" href="styles.css"/>
-
+  <meta name="description" content="Il gusto ti orbita intorno. Scopri ristoranti, bar, gelaterie con Orbo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
   <style>
+    /* ── TEMA SCURO ORBO ── */
     body {
-      margin: 0;
-      font-family: Inter, sans-serif;
-      background: linear-gradient(180deg, #1a0b2e, #0f051a);
+      background: linear-gradient(180deg, #1a0b2e 0%, #0f051a 100%);
       color: #fff;
     }
 
-    header {
+    /* ── TOPBAR ORBO ── */
+    .orbo-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
       display: flex;
       align-items: center;
       gap: 16px;
-      padding: 16px 20px;
-      background: linear-gradient(135deg, #1a0b2e, #2d1b4e);
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 60%, #4a1b96 100%);
       border-bottom: 1px solid rgba(255,179,71,0.2);
+      box-shadow: 0 4px 24px rgba(255,140,0,0.18);
     }
 
-    header img {
-      height: 42px;
+    .orbo-logo {
+      height: 48px;
+      width: 48px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 10px rgba(255,180,71,0.6));
+      transition: transform 250ms cubic-bezier(.34,1.56,.64,1);
     }
 
-    .title {
+    .orbo-logo:hover { transform: rotate(-5deg) scale(1.08); }
+
+    .orbo-slogan {
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 17px;
       font-weight: 900;
-      font-size: 18px;
-      color: #FFB347;
+      background: linear-gradient(180deg, #FFB347 0%, #FF8C00 60%, #E06500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(1px 1px 0 #7a3000) drop-shadow(2px 2px 4px rgba(0,0,0,0.6));
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      flex: 1;
     }
 
-    .menu-btn {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      width: 50px;
-      height: 50px;
+    /* ── BOTTONE 9 PUNTI ── */
+    .orbo-menu-btn {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #2d1b4e, #1a0b2e);
+      border: 2px solid rgba(255,140,0,0.45);
       border-radius: 14px;
-      background: #2d1b4e;
-      border: 1px solid #FF8C00;
-      color: #FFB347;
-      font-size: 18px;
+      box-shadow: 0 6px 20px rgba(255,140,0,0.2);
       cursor: pointer;
-      z-index: 1000;
+      flex-shrink: 0;
+      transition: transform 200ms ease, box-shadow 200ms ease;
     }
 
+    .orbo-menu-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 28px rgba(255,140,0,0.4);
+    }
+
+    /* ── MOBILE NAV ── */
     .mobile-nav {
+      display: none;
       position: fixed;
-      top: 0;
-      right: -100%;
-      width: 240px;
-      height: 100%;
-      background: #1a0b2e;
+      inset: 0 0 auto 0;
+      z-index: 40;
+      padding: 72px 20px 24px;
+      background: rgba(20, 8, 40, 0.98);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,140,0,0.2);
+      flex-direction: column;
+      gap: 6px;
+      transform: translateY(-100%);
+      transition: transform 280ms ease;
+      box-shadow: 0 12px 40px rgba(255,140,0,0.15);
+    }
+
+    .mobile-nav.open { transform: translateY(0); display: flex; }
+
+    .nav-link-mobile {
+      padding: 14px 18px;
+      border-radius: 14px;
+      color: rgba(255,179,71,0.75);
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      transition: color 180ms, background 180ms;
+    }
+
+    .nav-link-mobile.active,
+    .nav-link-mobile:hover {
+      color: #FFB347;
+      background: rgba(255,140,0,0.12);
+    }
+
+    /* ── HOME HERO ── */
+    .orbo-hero {
+      min-height: 100svh;
       display: flex;
       flex-direction: column;
-      padding: 20px;
-      transition: 0.3s;
-      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 80px 20px 40px;
+      background: radial-gradient(ellipse at center, #2d1b4e 0%, #1a0b2e 65%, #0f051a 100%);
     }
 
-    .mobile-nav.active {
-      right: 0;
+    /* Stelle di sfondo */
+    .orbo-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px);
+      background-size: 80px 80px, 40px 40px;
+      background-position: 0 0, 20px 20px;
+      opacity: 0.15;
     }
 
-    .mobile-nav button {
-      background: none;
-      border: none;
-      color: #FFB347;
-      padding: 14px;
-      text-align: left;
-      font-size: 16px;
-      cursor: pointer;
+    /* Alone arancione centrale */
+    .orbo-hero::after {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -60%);
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,140,0,0.12) 0%, transparent 70%);
+      pointer-events: none;
     }
 
-    .view {
-      display: none;
-      padding: 20px;
+    /* ── ORBITA ── */
+    .orbit-wrapper {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 420px; height: 420px;
+      margin: -210px 0 0 -210px;
+      animation: spin 28s linear infinite;
+      pointer-events: none;
     }
 
-    .view.active {
-      display: block;
+    .orbit-item {
+      position: absolute;
+      font-size: 40px;
+      filter: drop-shadow(0 0 14px rgba(255,140,0,0.9));
+      /* controrivoluzione per tenere emoji dritte */
+      animation: counter-spin 28s linear infinite;
     }
 
-    .hero {
+    @keyframes spin         { to { transform: rotate(360deg); } }
+    @keyframes counter-spin { to { transform: rotate(-360deg); } }
+    @keyframes pulse-logo {
+      0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 35px rgba(255,140,0,0.7)); }
+      50%       { transform: scale(1.07); filter: drop-shadow(0 0 60px rgba(255,140,0,1)); }
+    }
+
+    .orbo-center-logo {
+      position: relative;
+      z-index: 10;
+      width: 160px; height: 160px;
+      animation: pulse-logo 3.5s ease-in-out infinite;
+    }
+
+    /* ── TESTO HERO ── */
+    .orbo-hero-text {
+      position: relative;
+      z-index: 10;
       text-align: center;
-      padding: 80px 20px;
+      margin-top: 40px;
+      max-width: 560px;
     }
 
-    .hero img {
-      width: 160px;
-      animation: pulse 3s infinite;
+    .orbo-hero-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #FFB347;
+      margin: 0 0 14px;
+      text-shadow: 0 0 12px rgba(255,140,0,0.6);
     }
 
-    .hero h1 {
-      font-size: 28px;
-      margin-top: 20px;
+    .orbo-hero-title {
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: clamp(26px, 5vw, 44px);
+      font-weight: 900;
+      background: linear-gradient(180deg, #FFB347 0%, #FF8C00 55%, #E06500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(2px 2px 0 #7a3000) drop-shadow(0 0 20px rgba(255,140,0,0.4));
+      line-height: 1.15;
+      margin: 0 0 16px;
+    }
+
+    .orbo-hero-sub {
+      font-size: 15px;
+      color: #c8b8e8;
+      line-height: 1.7;
+      margin: 0 0 32px;
+    }
+
+    .orbo-hero-sub strong { color: #FFB347; }
+
+    /* ── CTA BUTTONS ── */
+    .orbo-cta-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .orbo-btn-primary {
+      background: linear-gradient(135deg, #FF8C00, #FFB347);
+      border: none;
+      padding: 16px 40px;
+      border-radius: 999px;
+      font-family: 'Arial Black', sans-serif;
+      font-size: 15px;
+      font-weight: 900;
+      color: #1a0b2e;
+      box-shadow: 0 6px 28px rgba(255,140,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .orbo-btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(255,140,0,0.65);
+    }
+
+    .orbo-btn-ghost {
+      background: rgba(255,140,0,0.08);
+      border: 2px solid rgba(255,140,0,0.5);
+      padding: 16px 40px;
+      border-radius: 999px;
+      font-family: 'Arial Black', sans-serif;
+      font-size: 15px;
+      font-weight: 900;
+      color: #FFB347;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      backdrop-filter: blur(10px);
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .orbo-btn-ghost:hover {
+      transform: translateY(-3px);
+      background: rgba(255,140,0,0.16);
+    }
+
+    /* ── SEZIONI DARK ── */
+    .orbo-sections {
+      background: #0f051a;
+      padding: 48px 20px;
+    }
+
+    .orbo-section-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: linear-gradient(135deg, #2d1b4e, #1a0b2e);
+      border: 1px solid rgba(255,140,0,0.35);
+      border-radius: 22px;
+      padding: 24px 28px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .orbo-section-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(255,140,0,0.25);
+      border-color: rgba(255,140,0,0.6);
+    }
+
+    .orbo-section-icon { font-size: 2rem; flex-shrink: 0; }
+
+    .orbo-section-kicker {
+      font-size: 10px;
+      font-weight: 900;
+      color: #FF8C00;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 0 0 4px;
+    }
+
+    .orbo-section-title {
+      font-size: 20px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #FFB347, #FF8C00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(1px 1px 0 #7a3000);
+      margin: 0;
+    }
+
+    /* ── VIEWS DARK ── */
+    .view { display: none; animation: fade-slide 300ms ease; }
+    .view.active { display: block; }
+
+    .search-panel,
+    .section-block {
+      background: rgba(45, 27, 78, 0.7);
+      border-color: rgba(255,140,0,0.2);
+    }
+
+    .input-group {
+      background: rgba(26, 11, 46, 0.9);
+      border-color: rgba(255,140,0,0.25);
+    }
+
+    .input-group input { color: #fff; }
+    .input-group input::placeholder { color: rgba(255,179,71,0.45); }
+
+    .select-wrap {
+      background: rgba(26,11,46,0.9);
+      border-color: rgba(255,140,0,0.25);
       color: #FFB347;
     }
 
-    .btn {
-      margin-top: 20px;
-      padding: 14px 28px;
-      border-radius: 30px;
-      border: none;
+    .select-wrap select { color: #FFB347; background: transparent; }
+    .select-wrap span { color: rgba(255,179,71,0.6); }
+
+    .category-chip {
+      background: rgba(45,27,78,0.8);
+      border-color: rgba(255,140,0,0.3);
+      color: rgba(255,179,71,0.7);
+    }
+
+    .category-chip.active {
       background: #FF8C00;
       color: #1a0b2e;
-      font-weight: bold;
-      cursor: pointer;
     }
 
-    @keyframes pulse {
-      0%,100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
+    .result-card,
+    .nearby-card {
+      background: linear-gradient(135deg, #2d1b4e, #1a0b2e);
+      border-color: rgba(255,140,0,0.25);
+      color: #fff;
+    }
+
+    .muted { color: rgba(255,179,71,0.6); }
+    .search-header h2 { color: #FFB347; }
+    .search-summary { color: rgba(255,179,71,0.6); }
+
+    .empty-state {
+      background: rgba(45,27,78,0.5);
+      border-color: rgba(255,140,0,0.2);
+      color: rgba(255,179,71,0.6);
+    }
+
+    /* ── APP MENU OVERLAY DARK ── */
+    .app-menu-overlay { background: rgba(10,4,20,0.7); }
+
+    .app-menu-panel {
+      background: linear-gradient(135deg, #2d1b4e, #1a0b2e);
+      border: 1px solid rgba(255,140,0,0.3);
+    }
+
+    .app-menu-header h2 { color: #FFB347; }
+
+    .close-menu-btn {
+      background: rgba(255,140,0,0.15);
+      color: #FFB347;
+    }
+
+    .app-tile {
+      background: linear-gradient(135deg, #3d2566, #2d1b4e);
+      border-color: rgba(255,140,0,0.2);
+      color: #FFB347;
+    }
+
+    .app-tile strong { color: #FFB347; }
+    .app-tile span:last-child { color: rgba(255,179,71,0.55); }
+    .app-tile:hover { border-color: rgba(255,140,0,0.5); }
+
+    /* ── MODAL DARK ── */
+    .modal-panel { background: #1a0b2e; color: #fff; }
+    .detail-description { color: #c8b8e8; }
+    .info-card {
+      background: rgba(45,27,78,0.6);
+      border-color: rgba(255,140,0,0.15);
+      color: #c8b8e8;
+    }
+    .info-label { color: #FFB347; }
+    .review-card {
+      background: rgba(45,27,78,0.5);
+      border-color: rgba(255,140,0,0.15);
+    }
+    .review-card p { color: #c8b8e8; }
+    .review-card strong { color: #FFB347; }
+
+    /* ── TOAST ── */
+    .toast { background: #2d1b2e; border: 1px solid rgba(255,140,0,0.4); color: #FFB347; }
+
+    @keyframes fade-slide {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .orbit-wrapper { width: 300px; height: 300px; margin: -150px 0 0 -150px; }
+      .orbit-item { font-size: 30px; }
+      .orbo-center-logo { width: 120px; height: 120px; }
     }
   </style>
 </head>
-
 <body>
+  <div class="app-shell">
 
-<!-- MENU BUTTON -->
-<button class="menu-btn" id="menu-toggle">☰</button>
+    <!-- ── TOPBAR ── -->
+    <header class="orbo-topbar">
+      <img src="src/assets/branding/OrboLogo.svg" alt="Orbo" class="orbo-logo" />
+      <span class="orbo-slogan">Il gusto ti orbita</span>
+      <button class="orbo-menu-btn" id="app-menu-btn" aria-label="Apri menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFB347">
+          <circle cx="5"  cy="5"  r="2"/><circle cx="12" cy="5"  r="2"/><circle cx="19" cy="5"  r="2"/>
+          <circle cx="5"  cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+          <circle cx="5"  cy="19" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="19" cy="19" r="2"/>
+        </svg>
+      </button>
+    </header>
 
-<!-- HEADER -->
-<header>
-  <img src="src/assets/branding/OrboLogo.svg" alt="Orbo">
-  <div class="title">ORBO</div>
-</header>
+    <!-- ── MOBILE NAV ── -->
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Menu mobile">
+      <button class="nav-link-mobile active" data-route="#home">🏠 Home</button>
+      <button class="nav-link-mobile" data-route="#search">🔍 Cerca</button>
+      <button class="nav-link-mobile" data-route="#favorites">❤️ Preferiti</button>
+      <button class="nav-link-mobile" data-route="#nearby">📍 Vicino a te</button>
+      <button class="nav-link-mobile" data-route="#toprated">⭐ Top Rated</button>
+      <button class="nav-link-mobile" data-route="#categories">🍝 Categorie</button>
+      <button class="nav-link-mobile" data-route="#ideas">💡 Idee</button>
+    </nav>
 
-<!-- MOBILE MENU -->
-<nav class="mobile-nav" id="mobile-nav">
-  <button data-route="#home">🏠 Home</button>
-  <button data-route="#search">🔍 Cerca</button>
-  <button data-route="#favorites">❤️ Preferiti</button>
-  <button data-route="#nearby">📍 Vicino</button>
-</nav>
+    <main id="app" role="main">
 
-<!-- APP -->
-<main>
+      <!-- ── HOME ── -->
+      <section class="view active" id="view-home" aria-labelledby="home-title">
+        <div class="orbo-hero">
 
-  <!-- HOME -->
-  <section class="view active" id="view-home">
-    <div class="hero">
-      <img src="src/assets/branding/OrboLogo.svg">
-      <h1>Il gusto ti orbita</h1>
-      <button class="btn" data-route="#search">Inizia</button>
+          <!-- Cibo in orbita -->
+          <div class="orbit-wrapper">
+            <span class="orbit-item" style="top:0;    left:50%; transform:translateX(-50%)">🍕</span>
+            <span class="orbit-item" style="top:50%;  right:0;  transform:translateY(-50%)">🍣</span>
+            <span class="orbit-item" style="bottom:0; left:50%; transform:translateX(-50%)">🍔</span>
+            <span class="orbit-item" style="top:50%;  left:0;   transform:translateY(-50%)">🍝</span>
+            <span class="orbit-item" style="top:14%;  right:14%">🍰</span>
+            <span class="orbit-item" style="bottom:14%;left:14%">☕</span>
+            <span class="orbit-item" style="top:14%;  left:14%">🥂</span>
+            <span class="orbit-item" style="bottom:14%;right:14%">🍜</span>
+          </div>
+
+          <!-- Logo centrale -->
+          <img src="src/assets/branding/OrboLogo.svg" alt="Orbo" class="orbo-center-logo" />
+
+          <!-- Testo -->
+          <div class="orbo-hero-text">
+            <p class="orbo-hero-kicker">Scopri il gusto</p>
+            <h1 class="orbo-hero-title" id="home-title">Il locale perfetto,<br>a portata di tap</h1>
+            <p class="orbo-hero-sub">
+              Cerca per atmosfera, cucina o occasione.<br>
+              <strong>Orbo ti porta dove vuoi essere.</strong>
+            </p>
+            <div class="orbo-cta-row">
+              <button class="orbo-btn-primary" data-route="#search">Inizia la ricerca →</button>
+              <button class="orbo-btn-ghost"    data-route="#nearby">📍 Vicino a me</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sezioni accesso rapido -->
+        <div class="orbo-sections">
+          <div class="orbo-section-card" data-route="#categories">
+            <span class="orbo-section-icon">🍝</span>
+            <div>
+              <p class="orbo-section-kicker">Esplora</p>
+              <h3 class="orbo-section-title">Categorie popolari</h3>
+            </div>
+          </div>
+          <div class="orbo-section-card" data-route="#ideas">
+            <span class="orbo-section-icon">💡</span>
+            <div>
+              <p class="orbo-section-kicker">Ispirazione</p>
+              <h3 class="orbo-section-title">Idee per oggi</h3>
+            </div>
+          </div>
+          <div class="orbo-section-card" data-route="#toprated">
+            <span class="orbo-section-icon">⭐</span>
+            <div>
+              <p class="orbo-section-kicker">Consigliati</p>
+              <h3 class="orbo-section-title">Scelti per te</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SEARCH ── -->
+      <section class="view" id="view-search" aria-labelledby="search-title">
+        <h2 id="search-title" class="visually-hidden">Cerca locali</h2>
+        <div class="search-panel">
+          <label class="input-group input-group-wide">
+            <span class="input-icon">🔍</span>
+            <input type="text" id="results-search-input" placeholder="Scrivi una città... Modena, Bologna, Milano" aria-label="Cerca locale" autocomplete="off" />
+          </label>
+          <div class="filter-row">
+            <div class="chip-row" id="search-categories" role="listbox"></div>
+            <label class="select-wrap">
+              <span>Prezzo</span>
+              <select id="price-filter">
+                <option value="all">Tutti</option>
+                <option value="€">€</option>
+                <option value="€€">€€</option>
+                <option value="€€€">€€€</option>
+              </select>
+            </label>
+            <label class="select-wrap">
+              <span>Rating</span>
+              <select id="rating-filter">
+                <option value="0">Tutti</option>
+                <option value="3.5">3.5+</option>
+                <option value="4">4.0+</option>
+                <option value="4.5">4.5+</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="search-header">
+          <h2>Risultati</h2>
+          <p class="search-summary" id="results-summary" role="status" aria-live="polite"></p>
+        </div>
+        <div class="results-list" id="results-list" role="list"></div>
+      </section>
+
+      <!-- ── FAVORITES ── -->
+      <section class="view" id="view-favorites" aria-labelledby="favorites-title">
+        <div class="search-header">
+          <h2 id="favorites-title">❤️ I tuoi preferiti</h2>
+          <p class="search-summary" id="favorites-summary" role="status" aria-live="polite"></p>
+        </div>
+        <div class="results-list" id="favorites-list" role="list"></div>
+      </section>
+
+      <!-- ── NEARBY ── -->
+      <section class="view" id="view-nearby" aria-labelledby="nearby-title">
+        <div class="search-header">
+          <h2 id="nearby-title">📍 Vicino a te</h2>
+          <button class="secondary-button" id="refresh-location-btn">🔄 Aggiorna posizione</button>
+        </div>
+        <div class="results-list" id="nearby-view-list" role="list"></div>
+      </section>
+
+      <!-- ── TOP RATED ── -->
+      <section class="view" id="view-toprated" aria-labelledby="toprated-title">
+        <div class="search-header">
+          <h2 id="toprated-title">⭐ Top Rated</h2>
+        </div>
+        <div class="results-list" id="toprated-list" role="list"></div>
+      </section>
+
+      <!-- ── CATEGORIES ── -->
+      <section class="view" id="view-categories" aria-labelledby="categories-title">
+        <div class="search-header">
+          <h2 id="categories-title">🍝 Categorie</h2>
+        </div>
+        <div class="category-grid" id="all-categories" role="list"></div>
+        <div class="results-list" id="category-results" role="list" style="margin-top:24px;"></div>
+      </section>
+
+      <!-- ── IDEAS ── -->
+      <section class="view" id="view-ideas" aria-labelledby="ideas-title">
+        <div class="section-block">
+          <div class="section-header">
+            <div><p class="section-kicker">Ispirati</p><h2 id="ideas-title">💡 Idee per stasera</h2></div>
+          </div>
+          <div class="ideas-grid" id="all-ideas"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ── APP MENU OVERLAY ── -->
+  <div class="app-menu-overlay" id="app-menu-overlay" role="dialog" aria-labelledby="app-menu-title" aria-modal="true">
+    <div class="app-menu-panel">
+      <div class="app-menu-header">
+        <h2 id="app-menu-title">Orbo</h2>
+        <button class="close-menu-btn" id="close-menu-btn" aria-label="Chiudi menu">✕</button>
+      </div>
+      <div class="app-grid" role="list">
+        <button class="app-tile" data-route="#home"><span class="app-icon">🏠</span><strong>Home</strong><span>Scopri</span></button>
+        <button class="app-tile" data-route="#search"><span class="app-icon">🔍</span><strong>Cerca</strong><span>Trova</span></button>
+        <button class="app-tile" data-route="#favorites"><span class="app-icon">❤️</span><strong>Preferiti</strong><span>Salvati</span></button>
+        <button class="app-tile" data-route="#nearby"><span class="app-icon">📍</span><strong>Vicino</strong><span>GPS</span></button>
+        <button class="app-tile" data-route="#toprated"><span class="app-icon">⭐</span><strong>Top Rated</strong><span>Migliori</span></button>
+        <button class="app-tile" data-route="#categories"><span class="app-icon">🍝</span><strong>Categorie</strong><span>Tutte</span></button>
+        <button class="app-tile" data-route="#ideas"><span class="app-icon">💡</span><strong>Idee</strong><span>Ispirati</span></button>
+        <button class="app-tile app-tile-soon" disabled><span class="app-icon">🗺️</span><strong>Mappa</strong><span>Presto</span></button>
+        <button class="app-tile app-tile-soon" disabled><span class="app-icon">👤</span><strong>Profilo</strong><span>Presto</span></button>
+      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- SEARCH -->
-  <section class="view" id="view-search">
-    <h2>Cerca</h2>
-    <input id="search-input" placeholder="Romantico, brunch..." />
-    <div id="results-list"></div>
-  </section>
+  <!-- ── DETAIL MODAL ── -->
+  <div class="modal hidden" id="detail-modal" role="dialog" aria-labelledby="detail-name" aria-modal="true" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="true"></div>
+    <div class="modal-panel">
+      <button class="modal-close" id="close-modal" aria-label="Chiudi dettaglio">✕</button>
+      <div class="detail-hero" id="detail-hero">
+        <div class="detail-hero-content">
+          <span class="detail-hero-badge" id="detail-hero-category"></span>
+          <h2 id="detail-hero-name"></h2>
+          <span class="detail-hero-rating" id="detail-hero-rating"></span>
+        </div>
+      </div>
+      <div class="detail-content">
+        <div class="detail-heading">
+          <div>
+            <span class="category-badge" id="detail-category"></span>
+            <h3 id="detail-name"></h3>
+          </div>
+          <div id="detail-rating" class="detail-rating"></div>
+        </div>
+        <p class="detail-description" id="detail-description"></p>
+        <div class="detail-info-grid">
+          <div class="info-card"><span class="info-label">📍 Indirizzo</span><p id="detail-address"></p></div>
+          <div class="info-card"><span class="info-label">🕐 Orari</span><p id="detail-hours"></p></div>
+          <div class="info-card"><span class="info-label">📞 Telefono</span><p id="detail-phone"></p></div>
+        </div>
+        <div>
+          <div class="section-header compact"><div><p class="section-kicker">Atmosfera</p><h4>Galleria</h4></div></div>
+          <div class="gallery-grid" id="detail-gallery"></div>
+        </div>
+        <div>
+          <div class="section-header compact"><div><p class="section-kicker">Cosa dicono</p><h4>Recensioni</h4></div></div>
+          <div class="reviews-list" id="detail-reviews"></div>
+        </div>
+        <div class="detail-actions">
+          <button class="primary-button" id="btn-menu">🍽️ Vedi Menu</button>
+          <button class="secondary-button" id="btn-sito">🌐 Sito Web</button>
+          <button class="ghost-button" id="btn-condividi">📤 Condividi</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- FAVORITES -->
-  <section class="view" id="view-favorites">
-    <h2>Preferiti</h2>
-    <div id="favorites-list"></div>
-  </section>
-
-  <!-- NEARBY -->
-  <section class="view" id="view-nearby">
-    <h2>Vicino a te</h2>
-    <div id="nearby-list"></div>
-  </section>
-
-</main>
-
-<!-- TOAST -->
-<div id="toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#FF8C00;color:#000;padding:10px 20px;border-radius:20px;display:none;"></div>
-
-<!-- JS -->
-<script src="app.js"></script>
-
+  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
 <script>
-/* MENU */
-document.getElementById('menu-toggle').onclick = () => {
-  document.getElementById('mobile-nav').classList.toggle('active');
-};
+// ORBO - RICERCA FUNZIONANTE (merge migliore)
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('results-search-input');
+  const catRow = document.getElementById('search-categories');
+  const list = document.getElementById('results-list');
+  const sum = document.getElementById('results-summary');
+  const menuBtn = document.getElementById('app-menu-btn');
+  const mobileNav = document.getElementById('mobile-nav');
+  
+  // Menu toggle (fallback se app.js non lo fa)
+  if(menuBtn && mobileNav) {
+    menuBtn.onclick = () => mobileNav.classList.toggle('open');
+  }
 
-/* ROUTING */
-document.body.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-route]');
-  if (!btn) return;
+  if(!input || !catRow || !list) return;
 
-  const route = btn.dataset.route;
+  const DB = {
+    modena:{ristoranti:[{n:'Osteria Francescana',v:4.9,d:'3 stelle Michelin - Massimo Bottura'},{n:'Trattoria Aldina',v:4.7,d:'Tortellini fatti a mano dal 1978'},{n:'Da Enzo',v:4.6,d:'Cucina tipica modenese'}],dolci:[{n:'Bloom - Gelato',v:4.8,d:'Pistacchio di Bronte'},{n:'K2',v:4.6,d:'Crema della casa'}],bar:[{n:'Caffè Concerto',v:4.5,d:'Piazza Grande, vista Duomo'}],pasticcerie:[{n:'Pasticceria Gollini',v:4.9,d:'Dal 1888 - Torta Barozzi'}]},
+    bologna:{ristoranti:[{n:'Trattoria Anna Maria',v:4.8,d:'Tagliatelle al ragù originale'},{n:'Oltre',v:4.7,d:'Cucina moderna bolognese'}],dolci:[{n:'Cremeria Cavour',v:4.9,d:'Dal 1947 - Cremino'},{n:'Stefino',v:4.7,d:'Gelato artigianale'}],bar:[{n:'Camera con Vista',v:4.8,d:'Terrazza sulle Due Torri'}],pasticcerie:[{n:'Pasticceria Gamberini',v:4.8,d:'Dal 1907 - Certosino'}]},
+    milano:{ristoranti:[{n:'Cracco in Galleria',v:4.8,d:'1 stella Michelin'},{n:'Langosteria',v:4.7,d:'Pesce crudo top'}],dolci:[{n:'Gelateria della Musica',v:4.9,d:'Top 10 Italia'}, {n:'Ciacco',v:4.8,d:'Senza zuccheri aggiunti'}],bar:[{n:'Camparino in Galleria',v:4.8,d:'Aperitivo storico'}, {n:'Nottingham Forest',v:4.7,d:'Cocktail bar'}],pasticcerie:[{n:'Marchesi 1824',v:4.9,d:'Prada - Panettone'}]}
+  };
 
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelector(`#view-${route.replace('#','')}`)?.classList.add('active');
+  let filtro='ristoranti';
+  const cats=[['ristoranti','🍝'],['dolci','🍦'],['bar','🍷'],['pasticcerie','🥐']];
+  
+  catRow.innerHTML = cats.map(c=>`<button class="category-chip ${c[0]===filtro?'active':''}" data-f="${c[0]}">${c[1]} ${c[0]}</button>`).join('');
+  
+  catRow.onclick = e => {
+    const btn = e.target.closest('[data-f]');
+    if(!btn) return;
+    filtro = btn.dataset.f;
+    [...catRow.children].forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    cerca();
+  };
 
-  document.getElementById('mobile-nav').classList.remove('active');
+  function cerca(){
+    const c = input.value.toLowerCase().trim();
+    if(c.length<2){ list.innerHTML=''; sum.textContent='Scrivi una città...'; return; }
+    const d = DB[c] || DB.modena;
+    const l = d[filtro] || [];
+    sum.textContent = `${l.length} risultati per ${filtro} a ${c.charAt(0).toUpperCase()+c.slice(1)}`;
+    list.innerHTML = l.map(p=>`
+      <div class="result-card" style="padding:18px; margin:12px 0; border-radius:16px; background:linear-gradient(135deg,#2d1b4e,#1a0b2e); border:1px solid rgba(255,140,0,0.3); cursor:pointer; transition:transform 0.2s">
+        <div style="display:flex; justify-content:space-between; align-items:start">
+          <div>
+            <b style="color:#FFB347; font-size:17px">${p.n}</b>
+            <p style="color:#c8b8e8; font-size:13px; margin:4px 0 0">${p.d}</p>
+          </div>
+          <span style="color:#FFB347; font-weight:700">★${p.v}</span>
+        </div>
+      </div>
+    `).join('');
+    
+    // Hover effect
+    list.querySelectorAll('.result-card').forEach(card => {
+      card.onmouseenter = () => card.style.transform = 'translateY(-2px)';
+      card.onmouseleave = () => card.style.transform = 'translateY(0)';
+    });
+  }
+
+  input.oninput = () => { if(input.value.length>2) cerca() };
+  input.onkeyup = e => { if(e.key==='Enter') cerca() };
+  
+  // Inizializza con placeholder
+  input.placeholder = 'Scrivi una città... Modena, Bologna, Milano';
 });
 </script>
-
 </body>
 </html>
