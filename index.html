@@ -333,7 +333,9 @@ window.addEventListener('load', function() {
   input.oninput=()=>{if(input.value.length>2)cerca()};
   input.onkeyup=e=>{if(e.key==='Enter')cerca()};
   
-  console.log('✅ Orbo city search caricato');
+  alert('ORBO CARICATO');
+  input.value = 'modena';
+  setTimeout(cerca, 800);
 });
 </script>
 </body>
