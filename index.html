@@ -2,341 +2,201 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-     <title>Orbo - Il gusto ti orbita</title>
-  <meta name="description" content="Il gusto ti orbita intorno. Scopri ristoranti, bar, gelaterie con Orbo." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body style="background: linear-gradient(180deg, #1a0b2e 0%, #0f051a 100%); margin: 0; color: #fff;">
-<!-- BOTTONE MENU ORBO TOP RIGHT -->
-<button onclick="document.querySelector('.mobile-nav').classList.toggle('active')" 
-  style="position: fixed; top: 20px; right: 20px; z-index: 9999; width: 52px; height: 52px; 
-  background: linear-gradient(135deg, #2d1b4e 0%, #1a0b2e 100%); 
-  border: 2px solid rgba(255,140,0,0.5); border-radius: 16px; 
-  box-shadow: 0 8px 24px rgba(255,140,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1); 
-  cursor: pointer; display: flex; align-items: center; justify-content: center; 
-  transition: all 0.3s ease;"
-  onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 12px 32px rgba(255,140,0,0.4)'" 
-  onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(255,140,0,0.2)'">
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFB347">
-    <circle cx="5" cy="5" r="2.2"/><circle cx="12" cy="5" r="2.2"/><circle cx="19" cy="5" r="2.2"/>
-    <circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/>
-    <circle cx="5" cy="19" r="2.2"/><circle cx="12" cy="19" r="2.2"/><circle cx="19" cy="19" r="2.2"/>
-  </svg>
-</button>
-  <div class="app-shell">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orbo - Il gusto ti orbita</title>
 
-    <header style="background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #4a1b96 100%); padding: 14px 24px; display: flex; align-items: center; gap: 18px; box-shadow: 0 4px 20px rgba(255,140,0,0.2); border-bottom: 1px solid rgba(255,179,71,0.2);" role="banner">
-  <img src="/FoodSpot/src/assets/branding/OrboLogo.svg" alt="Orbo" style="height: 52px; width: 52px; filter: drop-shadow(0 0 8px rgba(255,180,71,0.5));">
-  <div style="font-family: 'Arial Black', Arial, sans-serif; font-size: 19px; font-weight: 900; background: linear-gradient(180deg, #FFB347 0%, #FF8C00 50%, #E06500 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(1px 1px 0px #cc5500) drop-shadow(3px 3px 6px rgba(0,0,0,0.5)); letter-spacing: -0.5px; text-transform: uppercase;">IL GUSTO TI ORBITA</div>
-</header>
-<!-- BOTTONE MENU ORBO TOP RIGHT -->
-<button onclick="document.querySelector('.mobile-nav').classList.toggle('active')" 
-  style="position: fixed; top: 20px; right: 20px; z-index: 9999; width: 52px; height: 52px; 
-  background: linear-gradient(135deg, #2d1b4e 0%, #1a0b2e 100%); 
-  border: 2px solid rgba(255,140,0,0.5); border-radius: 16px; 
-  box-shadow: 0 8px 24px rgba(255,140,0,0.2); cursor: pointer; 
-  display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;"
-  onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 12px 32px rgba(255,140,0,0.4)'" 
-  onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(255,140,0,0.2)'">
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFB347">
-    <circle cx="5" cy="5" r="2.2"/><circle cx="12" cy="5" r="2.2"/><circle cx="19" cy="5" r="2.2"/>
-    <circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/>
-    <circle cx="5" cy="19" r="2.2"/><circle cx="12" cy="19" r="2.2"/><circle cx="19" cy="19" r="2.2"/>
-  </svg>
-</button>
-      <nav class="topbar-actions" role="navigation" aria-label="Menu principale">
-        <button class="nav-link active" data-route="#home">Home</button>
-        <button class="nav-link" data-route="#search">Cerca</button>
-        <button class="nav-link" data-route="#favorites">❤️ Preferiti</button>
-        <button class="nav-link" data-route="#nearby">Vicino</button>
-      </nav>
-
-     
-    </header>
-
-    <nav class="mobile-nav" id="mobile-nav" role="navigation" aria-label="Menu mobile">
-      <button class="nav-link-mobile active" data-route="#home">🏠 Home</button>
-      <button class="nav-link-mobile" data-route="#search">🔍 Cerca</button>
-      <button class="nav-link-mobile" data-route="#favorites">❤️ Preferiti</button>
-      <button class="nav-link-mobile" data-route="#nearby">📍 Vicino a te</button>
-      <button class="nav-link-mobile" data-route="#toprated">⭐ Top Rated</button>
-      <button class="nav-link-mobile" data-route="#categories">🍝 Categorie</button>
-      <button class="nav-link-mobile" data-route="#ideas">💡 Idee</button>
-    </nav>
-
-    <main id="app" role="main">
-
-      <!-- HOME -->
-<section class="view active" id="view-home" aria-labelledby="home-title" style="background: radial-gradient(ellipse at center, #2d1b4e 0%, #1a0b2e 70%, #0f051a 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 80px 20px;">
-  
-  <!-- CUBO ORBO CENTRALE CHE PULSA -->
-  <div style="position: relative; z-index: 10;">
-    <img src="src/assets/branding/OrboLogo.svg" alt="Orbo" style="width: 200px; height: 200px; filter: drop-shadow(0 0 40px rgba(255,140,0,0.7)); animation: pulse 3s ease-in-out infinite;">
-  </div>
-
-  <!-- CIBO CHE ORBITA INTORNO -->
-  <div style="position: absolute; top: 50%; left: 50%; width: 450px; height: 450px; margin-left: -225px; margin-top: -225px; animation: orbit 25s linear infinite;">
-    <span style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 48px; filter: drop-shadow(0 0 15px rgba(255,140,0,0.9));">🍕</span>
-    <span style="position: absolute; top: 50%; right: 0; transform: translateY(-50%); font-size: 48px; filter: drop-shadow(0 0 15px rgba(255,140,0,0.9));">🍣</span>
-    <span style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); font-size: 48px; filter: drop-shadow(0 0 15px rgba(255,140,0,0.9));">🍔</span>
-    <span style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); font-size: 48px; filter: drop-shadow(0 0 15px rgba(255,140,0,0.9));">🍝</span>
-    <span style="position: absolute; top: 15%; right: 15%; font-size: 40px; filter: drop-shadow(0 0 15px rgba(255,140,0,0.9));">🍰</span>
-    <span style="position: absolute; bottom: 15%; left: 15%; font-size: 40px; filter: drop-shadow(0 0 15px rgba(255,140,0,0.9));">☕</span>
-    <span style="position: absolute; top: 15%; left: 15%; font-size: 40px; filter: drop-shadow(0 0 15px rgba(255,140,0,0.9));">🥂</span>
-    <span style="position: absolute; bottom: 15%; right: 15%; font-size: 40px; filter: drop-shadow(0 0 15px rgba(255,140,0,0.9));">🍜</span>
-  </div>
-
-  <!-- TESTO E CTA -->
-  <div style="position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%); z-index: 20; width: 90%; max-width: 600px; text-align: center;">
-    <p style="font-family: Inter, sans-serif; font-size: 14px; font-weight: 600; color: #FFB347; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 16px; text-shadow: 0 0 10px rgba(255,140,0,0.5);">SCOPRI IL GUSTO</p>
-    <h1 id="home-title" style="font-family: 'Arial Black', Arial, sans-serif; font-size: clamp(28px, 5vw, 42px); font-weight: 900; background: linear-gradient(180deg, #FFB347 0%, #FF8C00 50%, #E06500 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 16px; filter: drop-shadow(2px 2px 0px #cc5500) drop-shadow(0 0 20px rgba(255,140,0,0.4)); line-height: 1.2;">Il locale perfetto, a portata di tap</h1>
-    <p style="font-family: Inter, sans-serif; font-size: 16px; color: #E0D0FF; margin: 0 0 32px; line-height: 1.6; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Cerca per atmosfera, cucina o occasione.<br><strong style="color: #FFB347;">Orbo ti porta dove vuoi essere.</strong></p>
-    
-    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-      <button data-route="#search" style="background: linear-gradient(135deg, #FF8C00 0%, #FFB347 100%); border: none; padding: 18px 44px; border-radius: 50px; font-family: 'Arial Black', sans-serif; font-size: 16px; font-weight: 900; color: #1a0b2e; box-shadow: 0 6px 30px rgba(255,140,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3); cursor: pointer; text-transform: uppercase;">Inizia la ricerca →</button>
-      <button data-route="#nearby" style="background: rgba(255,140,0,0.1); border: 2px solid #FF8C00; padding: 18px 44px; border-radius: 50px; font-family: 'Arial Black', sans-serif; font-size: 16px; font-weight: 900; color: #FFB347; box-shadow: 0 6px 30px rgba(255,140,0,0.2); cursor: pointer; text-transform: uppercase; backdrop-filter: blur(10px);">📍 Vicino a me</button>
-    </div>
-  </div>
+  <link rel="stylesheet" href="styles.css"/>
 
   <style>
-    @keyframes orbit {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    body {
+      margin: 0;
+      font-family: Inter, sans-serif;
+      background: linear-gradient(180deg, #1a0b2e, #0f051a);
+      color: #fff;
     }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #1a0b2e, #2d1b4e);
+      border-bottom: 1px solid rgba(255,179,71,0.2);
+    }
+
+    header img {
+      height: 42px;
+    }
+
+    .title {
+      font-weight: 900;
+      font-size: 18px;
+      color: #FFB347;
+    }
+
+    .menu-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: #2d1b4e;
+      border: 1px solid #FF8C00;
+      color: #FFB347;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 240px;
+      height: 100%;
+      background: #1a0b2e;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      transition: 0.3s;
+      z-index: 999;
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav button {
+      background: none;
+      border: none;
+      color: #FFB347;
+      padding: 14px;
+      text-align: left;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .view {
+      display: none;
+      padding: 20px;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .hero img {
+      width: 160px;
+      animation: pulse 3s infinite;
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      margin-top: 20px;
+      color: #FFB347;
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 14px 28px;
+      border-radius: 30px;
+      border: none;
+      background: #FF8C00;
+      color: #1a0b2e;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     @keyframes pulse {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 40px rgba(255,140,0,0.7)); }
-      50% { transform: scale(1.08); filter: drop-shadow(0 0 60px rgba(255,140,0,1)); }
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
     }
   </style>
-</section>
-            
-          </div>
-        </div>
+</head>
 
-        <section style="background: #0f051a; padding: 60px 20px 40px; display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto;">
-  
-  <div onclick="location.hash='#search'" style="background: linear-gradient(135deg, #2d1b4e 0%, #1a0b2e 100%); border: 2px solid rgba(255,140,0,0.4); border-radius: 24px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); cursor: pointer;">
-    <p style="font-size: 12px; font-weight: 900; color: #FF8C00; letter-spacing: 2px; margin: 0 0 8px;">ESPLORA</p>
-    <h3 style="font-size: 26px; font-weight: 900; background: linear-gradient(180deg, #FFB347 0%, #FF8C00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; filter: drop-shadow(1px 1px 0px #cc5500);">Categorie popolari</h3>
-  </div>
+<body>
 
-  <div onclick="location.hash='#search'" style="background: linear-gradient(135deg, #2d1b4e 0%, #1a0b2e 100%); border: 2px solid rgba(255,140,0,0.4); border-radius: 24px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); cursor: pointer;">
-    <p style="font-size: 12px; font-weight: 900; color: #FF8C00; letter-spacing: 2px; margin: 0 0 8px;">ISPIRAZIONE</p>
-    <h3 style="font-size: 26px; font-weight: 900; background: linear-gradient(180deg, #FFB347 0%, #FF8C00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; filter: drop-shadow(1px 1px 0px #cc5500);">Idee per oggi</h3>
-  </div>
+<!-- MENU BUTTON -->
+<button class="menu-btn" id="menu-toggle">☰</button>
 
-  <div onclick="location.hash='#toprated'" style="background: linear-gradient(135deg, #2d1b4e 0%, #1a0b2e 100%); border: 2px solid rgba(255,140,0,0.4); border-radius: 24px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); cursor: pointer;">
-    <p style="font-size: 12px; font-weight: 900; color: #FF8C00; letter-spacing: 2px; margin: 0 0 8px;">CONSIGLIATI</p>
-    <h3 style="font-size: 26px; font-weight: 900; background: linear-gradient(180deg, #FFB347 0%, #FF8C00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; filter: drop-shadow(1px 1px 0px #cc5500);">Scelti per te</h3>
-  </div>
+<!-- HEADER -->
+<header>
+  <img src="src/assets/branding/OrboLogo.svg" alt="Orbo">
+  <div class="title">ORBO</div>
+</header>
 
-</section>
-      </section>
+<!-- MOBILE MENU -->
+<nav class="mobile-nav" id="mobile-nav">
+  <button data-route="#home">🏠 Home</button>
+  <button data-route="#search">🔍 Cerca</button>
+  <button data-route="#favorites">❤️ Preferiti</button>
+  <button data-route="#nearby">📍 Vicino</button>
+</nav>
 
-      <!-- SEARCH -->
-      <section class="view" id="view-search" aria-labelledby="search-title">
-        <h2 id="search-title" class="visually-hidden">Cerca locali</h2>
-        <div class="search-panel">
-          <label class="input-group input-group-wide">
-            <span class="input-icon">🔍</span>
-            <input type="text" id="results-search-input" placeholder="Romantico, brunch, economico..." aria-label="Cerca locale" autocomplete="off" />
-          </label>
-          <div class="filter-row">
-            <div class="chip-row" id="search-categories" role="listbox" aria-label="Filtra per categoria"></div>
-            <label class="select-wrap">
-              <span>Prezzo</span>
-              <select id="price-filter" aria-label="Filtra per prezzo">
-                <option value="all">Tutti</option>
-                <option value="€">€</option>
-                <option value="€€">€€</option>
-                <option value="€€€">€€€</option>
-              </select>
-            </label>
-            <label class="select-wrap">
-              <span>Rating</span>
-              <select id="rating-filter" aria-label="Filtra per rating minimo">
-                <option value="0">Tutti</option>
-                <option value="3.5">3.5+</option>
-                <option value="4">4.0+</option>
-                <option value="4.5">4.5+</option>
-              </select>
-            </label>
-          </div>
-        </div>
-        <div class="search-header">
-          <h2>Risultati</h2>
-          <p class="search-summary" id="results-summary" role="status" aria-live="polite"></p>
-        </div>
-        <div class="results-list" id="results-list" role="list"></div>
-      </section>
+<!-- APP -->
+<main>
 
-      <!-- FAVORITES -->
-      <section class="view" id="view-favorites" aria-labelledby="favorites-title">
-        <div class="search-header">
-          <h2 id="favorites-title">❤️ I tuoi preferiti</h2>
-          <p class="search-summary" id="favorites-summary" role="status" aria-live="polite"></p>
-        </div>
-        <div class="results-list" id="favorites-list" role="list"></div>
-      </section>
-
-      <!-- NEARBY -->
-      <section class="view" id="view-nearby" aria-labelledby="nearby-title">
-        <div class="search-header">
-          <h2 id="nearby-title">📍 Vicino a te</h2>
-          <button class="secondary-button" id="refresh-location-btn">🔄 Aggiorna posizione</button>
-        </div>
-        <div class="results-list" id="nearby-view-list" role="list"></div>
-      </section>
-
-      <!-- TOP RATED -->
-      <section class="view" id="view-toprated" aria-labelledby="toprated-title">
-        <div class="search-header">
-          <h2 id="toprated-title">⭐ Top Rated</h2>
-        </div>
-        <div class="results-list" id="toprated-list" role="list"></div>
-      </section>
-
-      <!-- CATEGORIES -->
-      <section class="view" id="view-categories" aria-labelledby="categories-title">
-        <div class="search-header">
-          <h2 id="categories-title">🍝 Categorie</h2>
-        </div>
-        <div class="category-grid" id="all-categories" role="list"></div>
-        <div class="results-list" id="category-results" role="list" style="margin-top:24px;"></div>
-      </section>
-
-      <!-- IDEAS -->
-      <section class="view" id="view-ideas" aria-labelledby="ideas-title">
-        <div class="section-block">
-          <div class="section-header">
-            <div><p class="section-kicker">Ispirati</p><h2 id="ideas-title">💡 Idee per stasera</h2></div>
-          </div>
-          <div class="ideas-grid" id="all-ideas"></div>
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- APP MENU OVERLAY -->
-  <div class="app-menu-overlay" id="app-menu-overlay" role="dialog" aria-labelledby="app-menu-title" aria-modal="true">
-    <div class="app-menu-panel">
-      <div class="app-menu-header">
-        <h2 id="app-menu-title">FoodSpot</h2>
-        <button class="close-menu-btn" id="close-menu-btn" aria-label="Chiudi menu">✕</button>
-      </div>
-      <div class="app-grid" role="list">
-        <button class="app-tile" data-route="#home"><span class="app-icon">🏠</span><strong>Home</strong><span>Scopri</span></button>
-        <button class="app-tile" data-route="#search"><span class="app-icon">🔍</span><strong>Cerca</strong><span>Trova locale</span></button>
-        <button class="app-tile" data-route="#favorites"><span class="app-icon">❤️</span><strong>Preferiti</strong><span>Salvati</span></button>
-        <button class="app-tile" data-route="#nearby"><span class="app-icon">📍</span><strong>Vicino</strong><span>Intorno a te</span></button>
-        <button class="app-tile" data-route="#toprated"><span class="app-icon">⭐</span><strong>Top Rated</strong><span>I migliori</span></button>
-        <button class="app-tile" data-route="#categories"><span class="app-icon">🍝</span><strong>Categorie</strong><span>Tutte</span></button>
-        <button class="app-tile" data-route="#ideas"><span class="app-icon">💡</span><strong>Idee</strong><span>Ispirati</span></button>
-        <button class="app-tile app-tile-soon" disabled><span class="app-icon">🗺️</span><strong>Mappa</strong><span>Esplora</span></button>
-        <button class="app-tile app-tile-soon" disabled><span class="app-icon">👤</span><strong>Profilo</strong><span>Account</span></button>
-      </div>
+  <!-- HOME -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <img src="src/assets/branding/OrboLogo.svg">
+      <h1>Il gusto ti orbita</h1>
+      <button class="btn" data-route="#search">Inizia</button>
     </div>
-  </div>
+  </section>
 
-  <!-- DETAIL MODAL -->
-  <div class="modal hidden" id="detail-modal" role="dialog" aria-labelledby="detail-name" aria-modal="true" aria-hidden="true">
-    <div class="modal-backdrop" data-close-modal="true"></div>
-    <div class="modal-panel">
-      <button class="modal-close" id="close-modal" aria-label="Chiudi dettaglio">✕</button>
-      <div class="detail-hero" id="detail-hero">
-        <div class="detail-hero-content">
-          <span class="detail-hero-badge" id="detail-hero-category"></span>
-          <h2 id="detail-hero-name"></h2>
-          <span class="detail-hero-rating" id="detail-hero-rating"></span>
-        </div>
-      </div>
-      <div class="detail-content">
-        <div class="detail-heading">
-          <div>
-            <span class="category-badge" id="detail-category"></span>
-            <h3 id="detail-name"></h3>
-          </div>
-          <div id="detail-rating" class="detail-rating"></div>
-        </div>
-        <p class="detail-description" id="detail-description"></p>
-        <div class="detail-info-grid">
-          <div class="info-card"><span class="info-label">📍 Indirizzo</span><p id="detail-address"></p></div>
-          <div class="info-card"><span class="info-label">🕐 Orari</span><p id="detail-hours"></p></div>
-          <div class="info-card"><span class="info-label">📞 Telefono</span><p id="detail-phone"></p></div>
-        </div>
-        <div>
-          <div class="section-header compact"><div><p class="section-kicker">Atmosfera</p><h4>Galleria</h4></div></div>
-          <div class="gallery-grid" id="detail-gallery"></div>
-        </div>
-        <div>
-          <div class="section-header compact"><div><p class="section-kicker">Cosa dicono</p><h4>Recensioni</h4></div></div>
-          <div class="reviews-list" id="detail-reviews"></div>
-        </div>
-        <div class="detail-actions">
-          <button class="primary-button" id="btn-menu">🍽️ Vedi Menu</button>
-          <button class="secondary-button" id="btn-sito">🌐 Sito Web</button>
-          <button class="ghost-button" id="btn-condividi">📤 Condividi</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- SEARCH -->
+  <section class="view" id="view-search">
+    <h2>Cerca</h2>
+    <input id="search-input" placeholder="Romantico, brunch..." />
+    <div id="results-list"></div>
+  </section>
 
-  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
-  <script src="app.js" defer></script>
+  <!-- FAVORITES -->
+  <section class="view" id="view-favorites">
+    <h2>Preferiti</h2>
+    <div id="favorites-list"></div>
+  </section>
+
+  <!-- NEARBY -->
+  <section class="view" id="view-nearby">
+    <h2>Vicino a te</h2>
+    <div id="nearby-list"></div>
+  </section>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#FF8C00;color:#000;padding:10px 20px;border-radius:20px;display:none;"></div>
+
+<!-- JS -->
+<script src="app.js"></script>
+
 <script>
-// ORBO - RICERCA CITTÀ
-window.addEventListener('load', function() {
-  const input = document.getElementById('results-search-input');
-  const catRow = document.getElementById('search-categories');
-  const list = document.getElementById('results-list');
-  const sum = document.getElementById('results-summary');
-  
-  if(!input || !catRow || !list) return;
-  
-  input.placeholder = 'Scrivi una città... Modena';
-  input.value = '';
-  
-  const DB = {
-    modena:{ristoranti:[{n:'Osteria Francescana',v:4.9,d:'3 stelle'},{n:'Trattoria Aldina',v:4.7,d:'Tortellini'},{n:'Da Enzo',v:4.6,d:'Tipica'}],dolci:[{n:'Bloom',v:4.8,d:'Pistacchio'},{n:'K2',v:4.6,d:'Crema'}],bar:[{n:'Caffè Concerto',v:4.5,d:'Piazza Grande'}],pasticcerie:[{n:'Gollini',v:4.9,d:'Dal 1888'}]},
-    bologna:{ristoranti:[{n:'Anna Maria',v:4.8,d:'Tagliatelle'},{n:'Oltre',v:4.7,d:'Moderna'}],dolci:[{n:'Cremeria Cavour',v:4.9,d:'Dal 1947'}],bar:[{n:'Camera con Vista',v:4.8,d:'Torri'}],pasticcerie:[{n:'Gamberini',v:4.8,d:'1907'}]},
-    milano:{ristoranti:[{n:'Cracco',v:4.8,d:'Galleria'}],dolci:[{n:'Della Musica',v:4.9,d:'Top'}],bar:[{n:'Camparino',v:4.8,d:'Duomo'}],pasticcerie:[{n:'Marchesi',v:4.9,d:'Prada'}]}
-  };
-  
-  let filtro='ristoranti';
-  const cats=[['ristoranti','🍝'],['dolci','🍦'],['bar','🍷'],['pasticcerie','🥐']];
-  
-  catRow.innerHTML = cats.map(c=>`<button data-f="${c[0]}" style="padding:8px 14px;margin:4px;border-radius:12px;background:${c[0]===filtro?'#FF8C00':'transparent'};color:${c[0]===filtro?'#000':'#FFB347'};border:1px solid #FF8C00;font-weight:600">${c[1]} ${c[0]}</button>`).join('');
-  
-  catRow.onclick = e => {
-    if(e.target.dataset.f){ 
-      filtro=e.target.dataset.f; 
-      [...catRow.children].forEach(b=>{b.style.background='transparent';b.style.color='#FFB347'}); 
-      e.target.style.background='#FF8C00'; 
-      e.target.style.color='#000'; 
-      cerca(); 
-    }
-  };
-  
-  function cerca(){
-    const c=input.value.toLowerCase().trim();
-    if(c.length<2){list.innerHTML='';sum.textContent='';return;}
-    const d=DB[c]||DB.modena, l=d[filtro]||[];
-    sum.textContent=l.length+' risultati per '+filtro+' a '+c;
-    list.innerHTML=l.map(p=>`<div style="background:#2d1b4e;border:1px solid #FF8C00;padding:16px;border-radius:14px;margin:10px 0"><b style="color:#FFB347">${p.n}</b> <span style="float:right;color:gold">★${p.v}</span><br><span style="color:#aaa;font-size:13px">${p.d}</span></div>`).join('');
-  }
-  
-  input.oninput=()=>{if(input.value.length>2)cerca()};
-  input.onkeyup=e=>{if(e.key==='Enter')cerca()};
-  
-  alert('ORBO CARICATO');
-  input.value = 'modena';
-  setTimeout(cerca, 800);
+/* MENU */
+document.getElementById('menu-toggle').onclick = () => {
+  document.getElementById('mobile-nav').classList.toggle('active');
+};
+
+/* ROUTING */
+document.body.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-route]');
+  if (!btn) return;
+
+  const route = btn.dataset.route;
+
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelector(`#view-${route.replace('#','')}`)?.classList.add('active');
+
+  document.getElementById('mobile-nav').classList.remove('active');
 });
 </script>
+
 </body>
 </html>
