@@ -42,7 +42,7 @@
             border-bottom: 2px solid #334155;
             gap: 15px;
         }
-        
+
         #score-container {
             display: flex;
             justify-content: space-between;
@@ -56,7 +56,7 @@
             justify-content: center;
             gap: 10px;
         }
-        
+
         .slot {
             width: 40px;
             height: 40px;
@@ -74,7 +74,7 @@
             width: 24px;
             height: 24px;
         }
-        
+
         .falling-object .shape-item {
             /* Dimensione grande per quando cadono */
             width: 40px;
@@ -97,7 +97,7 @@
             position: relative;
             background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
         }
-        
+
         .lane-divider {
             position: absolute;
             top: 0; bottom: 0;
@@ -158,7 +158,7 @@
         }
         .flash-tris { background: #eab308; animation: flashAnim 0.5s ease-out; }
         .flash-error { background: #ef4444; animation: flashAnim 0.3s ease-out; }
-        
+
         @keyframes flashAnim {
             0% { opacity: 0.5; }
             100% { opacity: 0; }
@@ -257,14 +257,14 @@
     let isPlaying = false;
     let score = 0;
     let playerLane = 1; // 0: sx, 1: centro, 2: dx
-    
+
     let inventory = []; // Array di oggetti { shape, color }
     let fallingObjects = [];
-    
+
     let animationFrameId;
     let framesCounter = 0;
-    const speed = 4; // Velocità fissa
-    const spawnRate = 70; // Frequenza di apparizione oggetti
+    const speed = 2;          // <-- VELOCITÀ DIMEZZATA (era 4)
+    const spawnRate = 70;     // Frequenza di apparizione ondate
 
     // Elementi DOM
     const board = document.getElementById('board');
@@ -282,13 +282,13 @@
         score = 0;
         playerLane = 1;
         framesCounter = 0;
-        
+
         updateUI();
         playerEl.style.left = `${LANE_CENTERS[playerLane]}%`;
-        
+
         overlay.style.display = 'none';
         isPlaying = true;
-        
+
         cancelAnimationFrame(animationFrameId);
         gameLoop();
     }
@@ -305,11 +305,11 @@
         // Regola Forme: o tutte uguali o tutte diverse
         const shapesValid = (a.shape === b.shape && b.shape === c.shape) || 
                             (a.shape !== b.shape && b.shape !== c.shape && a.shape !== c.shape);
-        
+
         // Regola Colori: o tutti uguali o tutti diversi
         const colorsValid = (a.color === b.color && b.color === c.color) || 
                             (a.color !== b.color && b.color !== c.color && a.color !== c.color);
-        
+
         return shapesValid && colorsValid;
     }
 
@@ -317,7 +317,7 @@
     function processCollectedItem(newItem) {
         // 1. Controlla Annullamento (se esiste in inventario una figura identica)
         const duplicateIndex = inventory.findIndex(item => item.shape === newItem.shape && item.color === newItem.color);
-        
+
         if (duplicateIndex !== -1) {
             // Annullamento: rimuovo la figura gemella e NON aggiungo la nuova
             inventory.splice(duplicateIndex, 1);
@@ -328,7 +328,7 @@
 
         // 2. Aggiungi all'inventario se non annullata
         inventory.push(newItem);
-        
+
         // 3. Controlla Tris (cicla tutte le combinazioni possibili di 3 elementi nell'inventario)
         let trisFound = false;
         if (inventory.length >= 3) {
@@ -340,12 +340,12 @@
                             inventory.splice(k, 1);
                             inventory.splice(j, 1);
                             inventory.splice(i, 1);
-                            
+
                             score += 100;
                             trisFound = true;
                             showFloatingText("TRIS! +100", '#eab308');
                             triggerFlash('flash-tris');
-                            
+
                             // Esce dai cicli per elaborare un tris alla volta
                             break; 
                         }
@@ -365,7 +365,7 @@
     }
 
     // === GESTIONE VISIVA ===
-    
+
     function createShapeElement(shape, color) {
         const div = document.createElement('div');
         div.className = `shape-item shape-${shape} color-${color}`;
@@ -374,12 +374,12 @@
 
     function updateUI() {
         scoreEl.innerText = score;
-        
+
         // Aggiorna gli slot visivi
         for (let i = 0; i < MAX_INVENTORY; i++) {
             const slot = document.getElementById(`slot-${i}`);
             slot.innerHTML = ''; // Pulisci
-            
+
             if (i < inventory.length) {
                 const item = inventory[i];
                 slot.appendChild(createShapeElement(item.shape, item.color));
@@ -387,20 +387,35 @@
         }
     }
 
-    function spawnObject() {
-        const lane = Math.floor(Math.random() * 3);
+    // === SPAWN DI ONDATE (2 o 3 figure per volta) ===
+    function spawnObjectOnLane(lane) {
         const randomShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
         const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-        
+
         const el = document.createElement('div');
         el.className = 'falling-object';
         el.style.left = `${LANE_CENTERS[lane]}%`;
         el.style.top = '-50px';
-        
+
         el.appendChild(createShapeElement(randomShape, randomColor));
         board.appendChild(el);
-        
+
         fallingObjects.push({ el, lane, shape: randomShape, color: randomColor, y: -50 });
+    }
+
+    function spawnWave() {
+        // Decidi quante figure far cadere: 2 o 3 (30% di probabilità per 3)
+        const count = Math.random() < 0.3 ? 3 : 2;
+        // Scegli corsie casuali senza ripetizioni
+        let availableLanes = [0, 1, 2];
+        let chosenLanes = [];
+        for (let i = 0; i < count; i++) {
+            const idx = Math.floor(Math.random() * availableLanes.length);
+            chosenLanes.push(availableLanes[idx]);
+            availableLanes.splice(idx, 1);
+        }
+        // Spawna un oggetto su ogni corsia scelta
+        chosenLanes.forEach(lane => spawnObjectOnLane(lane));
     }
 
     function showFloatingText(text, color) {
@@ -412,7 +427,7 @@
         floatEl.style.left = `50%`;
         floatEl.style.top = `${board.getBoundingClientRect().height - 120}px`;
         board.appendChild(floatEl);
-        
+
         setTimeout(() => floatEl.remove(), 1000);
     }
 
@@ -440,7 +455,8 @@
         if (!isPlaying) return;
 
         framesCounter++;
-        if (framesCounter % spawnRate === 0) spawnObject();
+        // Ogni spawnRate frame genera una nuova ondata (2 o 3 figure)
+        if (framesCounter % spawnRate === 0) spawnWave();
 
         const playerY = board.getBoundingClientRect().height - 55; // Posizione Y approssimativa giocatore
 
@@ -453,7 +469,7 @@
             if (obj.lane === playerLane && obj.y + 40 >= playerY && obj.y <= playerY + 20) {
                 // Raccolto!
                 processCollectedItem({ shape: obj.shape, color: obj.color });
-                
+
                 // Rimozione oggetto dal campo
                 obj.el.remove();
                 fallingObjects.splice(i, 1);
