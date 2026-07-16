@@ -70,13 +70,11 @@
 
         /* === STILI FIGURE GEOMETRICHE === */
         .shape-item {
-            /* Dimensione base per l'inventario */
             width: 24px;
             height: 24px;
         }
 
         .falling-object .shape-item {
-            /* Dimensione grande per quando cadono */
             width: 40px;
             height: 40px;
         }
@@ -85,11 +83,15 @@
         .shape-square { border-radius: 4px; }
         .shape-circle { border-radius: 50%; }
         .shape-triangle { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+        /* NUOVA FORMA: ROMBO (DIAMOND) */
+        .shape-diamond { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
 
         /* Colori */
         .color-red { background-color: #ef4444; }
         .color-blue { background-color: #3b82f6; }
         .color-yellow { background-color: #eab308; }
+        /* NUOVO COLORE: VERDE */
+        .color-green { background-color: #22c55e; }
 
         /* === CAMPO DI GIOCO === */
         #board {
@@ -249,8 +251,9 @@
 
 <script>
     // === COSTANTI E VARIABILI ===
-    const SHAPES = ['square', 'circle', 'triangle'];
-    const COLORS = ['red', 'blue', 'yellow'];
+    // AGGIUNTA: 4 forme e 4 colori (ora 16 combinazioni totali)
+    const SHAPES = ['square', 'circle', 'triangle', 'diamond'];
+    const COLORS = ['red', 'blue', 'yellow', 'green'];
     const LANE_CENTERS = [16.66, 50, 83.33];
     const MAX_INVENTORY = 5;
 
@@ -258,13 +261,13 @@
     let score = 0;
     let playerLane = 1; // 0: sx, 1: centro, 2: dx
 
-    let inventory = []; // Array di oggetti { shape, color }
+    let inventory = []; 
     let fallingObjects = [];
 
     let animationFrameId;
     let framesCounter = 0;
-    const speed = 2;          // <-- VELOCITÀ DIMEZZATA (era 4)
-    const spawnRate = 70;     // Frequenza di apparizione ondate
+    const speed = 2;          // Velocità dimezzata
+    const spawnRate = 150;    // <-- DOPPIO DELLA DISTANZA TRA LE CADUTE (era 70)
 
     // Elementi DOM
     const board = document.getElementById('board');
@@ -300,53 +303,39 @@
 
     // === LOGICA TRIS E ANNULLAMENTO ===
 
-    // Verifica se 3 elementi formano un Tris valido
     function isValidTris(a, b, c) {
-        // Regola Forme: o tutte uguali o tutte diverse
         const shapesValid = (a.shape === b.shape && b.shape === c.shape) || 
                             (a.shape !== b.shape && b.shape !== c.shape && a.shape !== c.shape);
-
-        // Regola Colori: o tutti uguali o tutti diversi
         const colorsValid = (a.color === b.color && b.color === c.color) || 
                             (a.color !== b.color && b.color !== c.color && a.color !== c.color);
-
         return shapesValid && colorsValid;
     }
 
-    // Processa il nuovo oggetto raccolto
     function processCollectedItem(newItem) {
-        // 1. Controlla Annullamento (se esiste in inventario una figura identica)
         const duplicateIndex = inventory.findIndex(item => item.shape === newItem.shape && item.color === newItem.color);
 
         if (duplicateIndex !== -1) {
-            // Annullamento: rimuovo la figura gemella e NON aggiungo la nuova
             inventory.splice(duplicateIndex, 1);
             showFloatingText("ANNULLATO!", '#38bdf8');
             updateUI();
             return;
         }
 
-        // 2. Aggiungi all'inventario se non annullata
         inventory.push(newItem);
 
-        // 3. Controlla Tris (cicla tutte le combinazioni possibili di 3 elementi nell'inventario)
         let trisFound = false;
         if (inventory.length >= 3) {
             for (let i = 0; i < inventory.length - 2; i++) {
                 for (let j = i + 1; j < inventory.length - 1; j++) {
                     for (let k = j + 1; k < inventory.length; k++) {
                         if (isValidTris(inventory[i], inventory[j], inventory[k])) {
-                            // Trovato Tris! Rimuovi gli elementi in ordine inverso per non sballare gli indici
                             inventory.splice(k, 1);
                             inventory.splice(j, 1);
                             inventory.splice(i, 1);
-
                             score += 100;
                             trisFound = true;
                             showFloatingText("TRIS! +100", '#eab308');
                             triggerFlash('flash-tris');
-
-                            // Esce dai cicli per elaborare un tris alla volta
                             break; 
                         }
                     }
@@ -356,7 +345,6 @@
             }
         }
 
-        // 4. Controllo Game Over (se l'inventario eccede i 5 slot)
         if (inventory.length > MAX_INVENTORY) {
             gameOver();
         }
@@ -374,12 +362,9 @@
 
     function updateUI() {
         scoreEl.innerText = score;
-
-        // Aggiorna gli slot visivi
         for (let i = 0; i < MAX_INVENTORY; i++) {
             const slot = document.getElementById(`slot-${i}`);
-            slot.innerHTML = ''; // Pulisci
-
+            slot.innerHTML = ''; 
             if (i < inventory.length) {
                 const item = inventory[i];
                 slot.appendChild(createShapeElement(item.shape, item.color));
@@ -387,7 +372,7 @@
         }
     }
 
-    // === SPAWN DI ONDATE (2 o 3 figure per volta) ===
+    // === SPAWN ONDATE ===
     function spawnObjectOnLane(lane) {
         const randomShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
         const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
@@ -404,9 +389,7 @@
     }
 
     function spawnWave() {
-        // Decidi quante figure far cadere: 2 o 3 (30% di probabilità per 3)
         const count = Math.random() < 0.3 ? 3 : 2;
-        // Scegli corsie casuali senza ripetizioni
         let availableLanes = [0, 1, 2];
         let chosenLanes = [];
         for (let i = 0; i < count; i++) {
@@ -414,7 +397,6 @@
             chosenLanes.push(availableLanes[idx]);
             availableLanes.splice(idx, 1);
         }
-        // Spawna un oggetto su ogni corsia scelta
         chosenLanes.forEach(lane => spawnObjectOnLane(lane));
     }
 
@@ -423,11 +405,9 @@
         floatEl.className = 'floating-text';
         floatEl.innerText = text;
         floatEl.style.color = color;
-        // Posizionato al centro dello schermo in basso (sopra il giocatore)
         floatEl.style.left = `50%`;
         floatEl.style.top = `${board.getBoundingClientRect().height - 120}px`;
         board.appendChild(floatEl);
-
         setTimeout(() => floatEl.remove(), 1000);
     }
 
@@ -455,26 +435,20 @@
         if (!isPlaying) return;
 
         framesCounter++;
-        // Ogni spawnRate frame genera una nuova ondata (2 o 3 figure)
         if (framesCounter % spawnRate === 0) spawnWave();
 
-        const playerY = board.getBoundingClientRect().height - 55; // Posizione Y approssimativa giocatore
+        const playerY = board.getBoundingClientRect().height - 55; 
 
         for (let i = fallingObjects.length - 1; i >= 0; i--) {
             let obj = fallingObjects[i];
             obj.y += speed;
             obj.el.style.top = `${obj.y}px`;
 
-            // Rilevamento Collisione
             if (obj.lane === playerLane && obj.y + 40 >= playerY && obj.y <= playerY + 20) {
-                // Raccolto!
                 processCollectedItem({ shape: obj.shape, color: obj.color });
-
-                // Rimozione oggetto dal campo
                 obj.el.remove();
                 fallingObjects.splice(i, 1);
             } 
-            // Se esce dallo schermo in basso
             else if (obj.y > board.getBoundingClientRect().height) {
                 obj.el.remove();
                 fallingObjects.splice(i, 1);
@@ -488,21 +462,17 @@
 
     // === EVENT LISTENERS ===
     document.getElementById('btn-start').addEventListener('click', initGame);
-
-    // Controlli Mobile
     document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(-1); });
     document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(1); });
     document.getElementById('btn-left').addEventListener('mousedown', () => movePlayer(-1));
     document.getElementById('btn-right').addEventListener('mousedown', () => movePlayer(1));
 
-    // Controlli Tastiera
     window.addEventListener('keydown', (e) => {
         if (!isPlaying) return;
         if (e.key === 'ArrowLeft') movePlayer(-1);
         if (e.key === 'ArrowRight') movePlayer(1);
     });
 
-    // Inizializza visuale UI vuota
     updateUI();
 </script>
 </body>
