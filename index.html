@@ -83,14 +83,12 @@
         .shape-square { border-radius: 4px; }
         .shape-circle { border-radius: 50%; }
         .shape-triangle { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
-        /* NUOVA FORMA: ROMBO (DIAMOND) */
         .shape-diamond { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
 
         /* Colori */
         .color-red { background-color: #ef4444; }
         .color-blue { background-color: #3b82f6; }
         .color-yellow { background-color: #eab308; }
-        /* NUOVO COLORE: VERDE */
         .color-green { background-color: #22c55e; }
 
         /* === CAMPO DI GIOCO === */
@@ -244,14 +242,14 @@
 
     <div id="overlay">
         <h1 id="overlay-title">SHAPE RUNNER</h1>
-        <p id="overlay-desc">Crea dei TRIS: Colori tutti uguali o diversi AND Forme tutte uguali o diverse.<br><br>Catturi un doppione? Si annulla e libera spazio!<br>Non riempire i 5 slot.</p>
+        <!-- DESCRIZIONE AGGIORNATA PER LA MODALITÀ STRATEGICA -->
+        <p id="overlay-desc">⚠️ MODALITÀ STRATEGICA ⚠️<br><br>I doppioni NON si annullano più! Raccogli con prudenza o intaserai l'inventario.<br><br>Regole Tris: Colori (tutti uguali o tutti diversi) + Forme (tutti uguali o tutti diversi).<br>3 figure identiche formano un Tris valido.<br><br>Non riempire i 5 slot o sarà GAME OVER.</p>
         <button id="btn-start">GIOCA</button>
     </div>
 </div>
 
 <script>
     // === COSTANTI E VARIABILI ===
-    // AGGIUNTA: 4 forme e 4 colori (ora 16 combinazioni totali)
     const SHAPES = ['square', 'circle', 'triangle', 'diamond'];
     const COLORS = ['red', 'blue', 'yellow', 'green'];
     const LANE_CENTERS = [16.66, 50, 83.33];
@@ -259,15 +257,15 @@
 
     let isPlaying = false;
     let score = 0;
-    let playerLane = 1; // 0: sx, 1: centro, 2: dx
+    let playerLane = 1; 
 
     let inventory = []; 
     let fallingObjects = [];
 
     let animationFrameId;
     let framesCounter = 0;
-    const speed = 2;          // Velocità dimezzata
-    const spawnRate = 150;    // <-- DOPPIO DELLA DISTANZA TRA LE CADUTE (era 70)
+    const speed = 2;          
+    const spawnRate = 150;    
 
     // Elementi DOM
     const board = document.getElementById('board');
@@ -301,7 +299,7 @@
         playerEl.style.left = `${LANE_CENTERS[playerLane]}%`;
     }
 
-    // === LOGICA TRIS E ANNULLAMENTO ===
+    // === LOGICA TRIS ===
 
     function isValidTris(a, b, c) {
         const shapesValid = (a.shape === b.shape && b.shape === c.shape) || 
@@ -312,30 +310,26 @@
     }
 
     function processCollectedItem(newItem) {
-        const duplicateIndex = inventory.findIndex(item => item.shape === newItem.shape && item.color === newItem.color);
-
-        if (duplicateIndex !== -1) {
-            inventory.splice(duplicateIndex, 1);
-            showFloatingText("ANNULLATO!", '#38bdf8');
-            updateUI();
-            return;
-        }
-
+        // 1. NON c'è più l'annullamento dei doppioni! Tutto viene aggiunto.
         inventory.push(newItem);
 
+        // 2. Controlla Tris (cicla tutte le combinazioni possibili di 3 elementi nell'inventario)
         let trisFound = false;
         if (inventory.length >= 3) {
             for (let i = 0; i < inventory.length - 2; i++) {
                 for (let j = i + 1; j < inventory.length - 1; j++) {
                     for (let k = j + 1; k < inventory.length; k++) {
                         if (isValidTris(inventory[i], inventory[j], inventory[k])) {
+                            // Trovato Tris! Rimuovi gli elementi in ordine inverso per non sballare gli indici
                             inventory.splice(k, 1);
                             inventory.splice(j, 1);
                             inventory.splice(i, 1);
+
                             score += 100;
                             trisFound = true;
                             showFloatingText("TRIS! +100", '#eab308');
                             triggerFlash('flash-tris');
+
                             break; 
                         }
                     }
@@ -345,6 +339,7 @@
             }
         }
 
+        // 3. Controllo Game Over (se l'inventario eccede i 5 slot, ORA succede davvero!)
         if (inventory.length > MAX_INVENTORY) {
             gameOver();
         }
@@ -424,7 +419,7 @@
         setTimeout(() => {
             overlayTitle.innerText = "SPAZIO ESAURITO!";
             overlayTitle.style.color = "#ef4444";
-            overlayDesc.innerText = `Punteggio Finale: ${score}\nHai riempito l'inventario senza fare Tris.`;
+            overlayDesc.innerText = `Punteggio Finale: ${score}\nHai riempito l'inventario senza fare Tris.\nI doppioni ti hanno tradito!`;
             document.getElementById('btn-start').innerText = "RIPROVA";
             overlay.style.display = 'flex';
         }, 400);
