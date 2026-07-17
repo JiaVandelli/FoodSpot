@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Shape Runner (Tris & Annullamento)</title>
+    <title>Shape Runner - Neon Edition</title>
     <style>
         /* === STILI GLOBALI === */
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
         body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #0f172a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #050510;
             color: white;
             display: flex;
             justify-content: center;
@@ -24,85 +24,116 @@
             max-width: 400px;
             height: 100%;
             max-height: 800px;
-            background-color: #1e293b;
+            background-color: #0f172a;
             position: relative;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
             overflow: hidden;
         }
 
-        /* === UI SUPERIORE (INVENTARIO E SCORE) === */
+        /* Effetto tremolio (Screen Shake) */
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        /* === UI SUPERIORE === */
         #ui-top {
             display: flex;
             flex-direction: column;
             padding: 15px;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(5px);
             z-index: 10;
-            border-bottom: 2px solid #334155;
-            gap: 15px;
+            border-bottom: 2px solid #38bdf8;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+            gap: 10px;
         }
 
         #score-container {
             display: flex;
             justify-content: space-between;
-            font-size: 20px;
-            font-weight: bold;
-            color: #38bdf8;
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 10px #38bdf8;
+        }
+
+        #combo-display {
+            font-size: 16px;
+            color: #f472b6;
+            text-shadow: 0 0 8px #f472b6;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
         #inventory-slots {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .slot {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid #334155;
-            border-radius: 8px;
+            width: 45px;
+            height: 45px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #475569;
+            border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: all 0.2s;
         }
 
-        /* === STILI FIGURE GEOMETRICHE === */
-        .shape-item {
-            width: 24px;
-            height: 24px;
-        }
+        /* === STILI FIGURE GEOMETRICHE CON GLOW === */
+        .shape-item { width: 26px; height: 26px; }
+        .falling-object .shape-item { width: 45px; height: 45px; }
 
-        .falling-object .shape-item {
-            width: 40px;
-            height: 40px;
-        }
-
-        /* Forme */
-        .shape-square { border-radius: 4px; }
+        .shape-square { border-radius: 6px; }
         .shape-circle { border-radius: 50%; }
         .shape-triangle { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
         .shape-diamond { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
 
-        /* Colori */
-        .color-red { background-color: #ef4444; }
-        .color-blue { background-color: #3b82f6; }
-        .color-yellow { background-color: #eab308; }
-        .color-green { background-color: #22c55e; }
+        .color-red { background-color: #ff3366; box-shadow: 0 0 15px #ff3366; }
+        .color-blue { background-color: #00f3ff; box-shadow: 0 0 15px #00f3ff; }
+        .color-yellow { background-color: #ffcc00; box-shadow: 0 0 15px #ffcc00; }
+        .color-green { background-color: #00ff66; box-shadow: 0 0 15px #00ff66; }
 
-        /* === CAMPO DI GIOCO === */
+        /* === CAMPO DI GIOCO SCORREVOLE === */
         #board {
             flex-grow: 1;
             position: relative;
-            background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
+            background-color: #050510;
+            overflow: hidden;
+        }
+
+        /* Griglia animata in background per senso di velocità */
+        #grid-bg {
+            position: absolute;
+            width: 100%;
+            height: 200%;
+            top: -100%;
+            background-image: 
+                linear-gradient(rgba(56, 189, 248, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.2) 1px, transparent 1px);
+            background-size: 100% 40px, 33.33% 100%;
+            animation: scrollBackground 1.5s linear infinite;
+        }
+
+        @keyframes scrollBackground {
+            100% { transform: translateY(50%); }
         }
 
         .lane-divider {
             position: absolute;
             top: 0; bottom: 0;
             width: 2px;
-            background: rgba(255, 255, 255, 0.05);
+            background: linear-gradient(to bottom, transparent, rgba(56, 189, 248, 0.5), transparent);
+            z-index: 1;
         }
         .ld-1 { left: 33.33%; }
         .ld-2 { left: 66.66%; }
@@ -110,87 +141,91 @@
         /* === IL GIOCATORE === */
         #player {
             position: absolute;
-            bottom: 40px;
-            width: 60px;
-            height: 15px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            transform: translateX(-50%);
-            transition: left 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+            bottom: 60px;
+            width: 50px;
+            height: 50px;
+            background: transparent;
+            border: 3px solid #fff;
+            border-radius: 12px;
+            transform: translateX(-50%) rotate(45deg);
+            transition: left 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Movimento elastico */
             z-index: 5;
-            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+            box-shadow: 0 0 20px rgba(255,255,255,0.8), inset 0 0 10px rgba(255,255,255,0.5);
+        }
+        
+        #player::after {
+            content: '';
+            position: absolute;
+            width: 20px; height: 20px;
+            background: #fff;
+            top: 12px; left: 12px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px #fff;
         }
 
         /* === OGGETTI CADENTI === */
         .falling-object {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             display: flex;
             justify-content: center;
             align-items: center;
             transform: translateX(-50%);
+            z-index: 4;
         }
 
-        /* Testo fluttuante (es. TRIS! o ANNULLATO!) */
+        /* Testo fluttuante */
         .floating-text {
             position: absolute;
-            font-size: 22px;
-            font-weight: bold;
+            font-size: 28px;
+            font-weight: 900;
             pointer-events: none;
-            animation: floatUp 1s ease-out forwards;
+            animation: floatUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             z-index: 20;
             text-align: center;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            text-shadow: 0 4px 10px rgba(0,0,0,1);
+            letter-spacing: 2px;
         }
         @keyframes floatUp {
-            0% { opacity: 1; transform: translate(-50%, 0) scale(1.2); }
-            100% { opacity: 0; transform: translate(-50%, -60px) scale(1); }
+            0% { opacity: 1; transform: translate(-50%, 0) scale(0.5); }
+            20% { transform: translate(-50%, -20px) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -80px) scale(1); }
         }
 
-        /* Effetti visivi */
-        .flash {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            z-index: 15;
-            pointer-events: none;
-        }
-        .flash-tris { background: #eab308; animation: flashAnim 0.5s ease-out; }
-        .flash-error { background: #ef4444; animation: flashAnim 0.3s ease-out; }
-
-        @keyframes flashAnim {
-            0% { opacity: 0.5; }
-            100% { opacity: 0; }
-        }
-
-        /* === CONTROLLI MOBILE === */
+        /* === CONTROLLI === */
         #controls-wrapper {
-            background: #0f172a;
+            background: #050510;
             padding: 15px;
             display: flex;
-            gap: 10px;
+            gap: 15px;
             z-index: 10;
+            border-top: 1px solid #1e293b;
         }
         button.ctrl-btn {
             flex: 1;
-            padding: 25px 0;
+            padding: 20px 0;
             font-size: 32px;
-            font-weight: bold;
-            border: none;
-            border-radius: 12px;
-            background: #334155;
-            color: white;
+            border: 2px solid #334155;
+            border-radius: 16px;
+            background: rgba(30, 41, 59, 0.8);
+            color: #38bdf8;
             cursor: pointer;
-            transition: transform 0.1s, background 0.2s;
+            transition: all 0.1s;
+            box-shadow: 0 4px 0 #0f172a;
         }
-        button.ctrl-btn:active { transform: scale(0.95); background: #475569; }
+        button.ctrl-btn:active { 
+            transform: translateY(4px); 
+            box-shadow: 0 0 0 #0f172a; 
+            background: #334155; 
+        }
 
         /* === OVERLAY MENU === */
         #overlay {
             position: absolute;
             inset: 0;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(5, 5, 16, 0.95);
+            backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -199,18 +234,30 @@
             text-align: center;
             padding: 20px;
         }
-        #overlay h1 { font-size: 36px; margin-bottom: 10px; color: #f8fafc; }
-        #overlay p { margin-bottom: 30px; font-size: 15px; color: #94a3b8; line-height: 1.4; }
+        #overlay-title { 
+            font-size: 46px; 
+            margin-bottom: 5px; 
+            color: #fff; 
+            text-shadow: 0 0 20px #38bdf8, 0 0 40px #38bdf8;
+            font-style: italic;
+            text-transform: uppercase;
+        }
+        #overlay p { margin-bottom: 30px; font-size: 16px; color: #94a3b8; line-height: 1.6; }
+        #overlay strong { color: #fff; }
         #btn-start {
-            padding: 15px 40px;
-            font-size: 20px;
-            font-weight: bold;
-            background: #10b981;
+            padding: 18px 50px;
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff3366, #ffcc00);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 30px;
             cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255, 51, 102, 0.4);
+            transition: transform 0.2s;
+            text-transform: uppercase;
         }
+        #btn-start:hover { transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -218,7 +265,8 @@
 <div id="game-container">
     <div id="ui-top">
         <div id="score-container">
-            <span>Score: <span id="score">0</span></span>
+            <span>⚡ <span id="score">0</span></span>
+            <span id="combo-display">COMBO x2!</span>
         </div>
         <div id="inventory-slots">
             <div class="slot" id="slot-0"></div>
@@ -230,6 +278,7 @@
     </div>
 
     <div id="board">
+        <div id="grid-bg"></div>
         <div class="lane-divider ld-1"></div>
         <div class="lane-divider ld-2"></div>
         <div id="player"></div>
@@ -241,15 +290,17 @@
     </div>
 
     <div id="overlay">
-        <h1 id="overlay-title">SHAPE RUNNER</h1>
-        <!-- DESCRIZIONE AGGIORNATA PER LA MODALITÀ STRATEGICA -->
-        <p id="overlay-desc">⚠️ MODALITÀ STRATEGICA ⚠️<br><br>I doppioni NON si annullano più! Raccogli con prudenza o intaserai l'inventario.<br><br>Regole Tris: Colori (tutti uguali o tutti diversi) + Forme (tutti uguali o tutti diversi).<br>3 figure identiche formano un Tris valido.<br><br>Non riempire i 5 slot o sarà GAME OVER.</p>
+        <h1 id="overlay-title">NEON TRIS</h1>
+        <p id="overlay-desc">
+            <strong>⚠️ Niente sconti!</strong> I doppioni occupano spazio.<br><br>
+            Abbina 3 forme <strong>TUTTE UGUALI</strong> o <strong>TUTTE DIVERSE</strong> (sia colore che forma).<br><br>
+            Non riempire i 5 slot o esplodi!
+        </p>
         <button id="btn-start">GIOCA</button>
     </div>
 </div>
 
 <script>
-    // === COSTANTI E VARIABILI ===
     const SHAPES = ['square', 'circle', 'triangle', 'diamond'];
     const COLORS = ['red', 'blue', 'yellow', 'green'];
     const LANE_CENTERS = [16.66, 50, 83.33];
@@ -258,24 +309,32 @@
     let isPlaying = false;
     let score = 0;
     let playerLane = 1; 
-
     let inventory = []; 
     let fallingObjects = [];
 
+    // Parametri Dinamici per Difficoltà Crescente
+    let currentSpeed = 3.5;
+    let currentSpawnRate = 120;
+    const baseSpeed = 3.5;
+    const maxSpeed = 12;
+
+    // Sistema Combo
+    let comboCount = 0;
+    let comboTimer = null;
+
     let animationFrameId;
     let framesCounter = 0;
-    const speed = 2;          
-    const spawnRate = 150;    
 
-    // Elementi DOM
     const board = document.getElementById('board');
     const playerEl = document.getElementById('player');
     const scoreEl = document.getElementById('score');
     const overlay = document.getElementById('overlay');
     const overlayTitle = document.getElementById('overlay-title');
     const overlayDesc = document.getElementById('overlay-desc');
+    const comboDisplay = document.getElementById('combo-display');
+    const gameContainer = document.getElementById('game-container');
+    const gridBg = document.getElementById('grid-bg');
 
-    // === INIZIALIZZAZIONE ===
     function initGame() {
         fallingObjects.forEach(obj => obj.el.remove());
         fallingObjects = [];
@@ -283,10 +342,13 @@
         score = 0;
         playerLane = 1;
         framesCounter = 0;
+        currentSpeed = baseSpeed;
+        currentSpawnRate = 120;
+        comboCount = 0;
 
+        gridBg.style.animationDuration = "1.5s";
         updateUI();
         playerEl.style.left = `${LANE_CENTERS[playerLane]}%`;
-
         overlay.style.display = 'none';
         isPlaying = true;
 
@@ -299,7 +361,11 @@
         playerEl.style.left = `${LANE_CENTERS[playerLane]}%`;
     }
 
-    // === LOGICA TRIS ===
+    function shakeScreen() {
+        gameContainer.classList.remove('shake');
+        void gameContainer.offsetWidth; // Trigger reflow
+        gameContainer.classList.add('shake');
+    }
 
     function isValidTris(a, b, c) {
         const shapesValid = (a.shape === b.shape && b.shape === c.shape) || 
@@ -310,26 +376,36 @@
     }
 
     function processCollectedItem(newItem) {
-        // 1. NON c'è più l'annullamento dei doppioni! Tutto viene aggiunto.
         inventory.push(newItem);
 
-        // 2. Controlla Tris (cicla tutte le combinazioni possibili di 3 elementi nell'inventario)
         let trisFound = false;
         if (inventory.length >= 3) {
             for (let i = 0; i < inventory.length - 2; i++) {
                 for (let j = i + 1; j < inventory.length - 1; j++) {
                     for (let k = j + 1; k < inventory.length; k++) {
                         if (isValidTris(inventory[i], inventory[j], inventory[k])) {
-                            // Trovato Tris! Rimuovi gli elementi in ordine inverso per non sballare gli indici
                             inventory.splice(k, 1);
                             inventory.splice(j, 1);
                             inventory.splice(i, 1);
+                            
+                            // Gestione Combo
+                            comboCount++;
+                            let points = 100 * comboCount;
+                            score += points;
+                            
+                            clearTimeout(comboTimer);
+                            comboDisplay.innerText = `COMBO x${comboCount}!`;
+                            comboDisplay.style.color = '#00ff66';
+                            comboDisplay.style.opacity = 1;
+                            
+                            comboTimer = setTimeout(() => {
+                                comboCount = 0;
+                                comboDisplay.style.opacity = 0;
+                            }, 4000); // 4 secondi per concatenare combo
 
-                            score += 100;
                             trisFound = true;
-                            showFloatingText("TRIS! +100", '#eab308');
-                            triggerFlash('flash-tris');
-
+                            shakeScreen();
+                            showFloatingText(`TRIS! +${points}`, '#00ff66');
                             break; 
                         }
                     }
@@ -339,15 +415,17 @@
             }
         }
 
-        // 3. Controllo Game Over (se l'inventario eccede i 5 slot, ORA succede davvero!)
+        // Feedback negativo se non c'è Tris e si riempie l'inventario
+        if(!trisFound && inventory.length >= 4) {
+            document.getElementById(`slot-${inventory.length-1}`).style.borderColor = '#ff3366';
+        }
+
         if (inventory.length > MAX_INVENTORY) {
             gameOver();
         }
 
         updateUI();
     }
-
-    // === GESTIONE VISIVA ===
 
     function createShapeElement(shape, color) {
         const div = document.createElement('div');
@@ -360,6 +438,7 @@
         for (let i = 0; i < MAX_INVENTORY; i++) {
             const slot = document.getElementById(`slot-${i}`);
             slot.innerHTML = ''; 
+            slot.style.borderColor = '#475569'; // Reset border
             if (i < inventory.length) {
                 const item = inventory[i];
                 slot.appendChild(createShapeElement(item.shape, item.color));
@@ -367,7 +446,6 @@
         }
     }
 
-    // === SPAWN ONDATE ===
     function spawnObjectOnLane(lane) {
         const randomShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
         const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
@@ -375,16 +453,16 @@
         const el = document.createElement('div');
         el.className = 'falling-object';
         el.style.left = `${LANE_CENTERS[lane]}%`;
-        el.style.top = '-50px';
+        el.style.top = '-60px';
 
         el.appendChild(createShapeElement(randomShape, randomColor));
         board.appendChild(el);
 
-        fallingObjects.push({ el, lane, shape: randomShape, color: randomColor, y: -50 });
+        fallingObjects.push({ el, lane, shape: randomShape, color: randomColor, y: -60 });
     }
 
     function spawnWave() {
-        const count = Math.random() < 0.3 ? 3 : 2;
+        const count = Math.random() < 0.4 ? 2 : 1; // Meno muri impossibili, più fluidità
         let availableLanes = [0, 1, 2];
         let chosenLanes = [];
         for (let i = 0; i < count; i++) {
@@ -401,45 +479,48 @@
         floatEl.innerText = text;
         floatEl.style.color = color;
         floatEl.style.left = `50%`;
-        floatEl.style.top = `${board.getBoundingClientRect().height - 120}px`;
+        floatEl.style.top = `${board.getBoundingClientRect().height - 150}px`;
         board.appendChild(floatEl);
         setTimeout(() => floatEl.remove(), 1000);
     }
 
-    function triggerFlash(className) {
-        const flash = document.createElement('div');
-        flash.className = `flash ${className}`;
-        board.appendChild(flash);
-        setTimeout(() => flash.remove(), 500);
-    }
-
     function gameOver() {
         isPlaying = false;
-        triggerFlash('flash-error');
+        shakeScreen();
+        gridBg.style.animationPlayState = 'paused';
         setTimeout(() => {
-            overlayTitle.innerText = "SPAZIO ESAURITO!";
-            overlayTitle.style.color = "#ef4444";
-            overlayDesc.innerText = `Punteggio Finale: ${score}\nHai riempito l'inventario senza fare Tris.\nI doppioni ti hanno tradito!`;
+            overlayTitle.innerText = "ESPLOSO!";
+            overlayTitle.style.color = "#ff3366";
+            overlayTitle.style.textShadow = "0 0 20px #ff3366";
+            overlayDesc.innerHTML = `<span style="font-size:24px; color:#fff;">Score: ${score}</span><br><br>Inventario pieno. Raccogli con più astuzia!`;
             document.getElementById('btn-start').innerText = "RIPROVA";
             overlay.style.display = 'flex';
-        }, 400);
+        }, 500);
     }
 
-    // === LOOP DI GIOCO ===
     function gameLoop() {
         if (!isPlaying) return;
 
         framesCounter++;
-        if (framesCounter % spawnRate === 0) spawnWave();
+        
+        // Aumento progressivo della difficoltà
+        if (framesCounter % 600 === 0) { // Circa ogni 10 secondi
+            currentSpeed = Math.min(maxSpeed, currentSpeed + 0.5);
+            currentSpawnRate = Math.max(40, currentSpawnRate - 10);
+            gridBg.style.animationDuration = `${1.5 / (currentSpeed/baseSpeed)}s`; // Accelera lo sfondo
+        }
 
-        const playerY = board.getBoundingClientRect().height - 55; 
+        if (framesCounter % currentSpawnRate === 0) spawnWave();
+
+        const playerY = board.getBoundingClientRect().height - 90; // Allineato col nuovo player
 
         for (let i = fallingObjects.length - 1; i >= 0; i--) {
             let obj = fallingObjects[i];
-            obj.y += speed;
+            obj.y += currentSpeed;
             obj.el.style.top = `${obj.y}px`;
 
-            if (obj.lane === playerLane && obj.y + 40 >= playerY && obj.y <= playerY + 20) {
+            // Hitbox collisione
+            if (obj.lane === playerLane && obj.y + 45 >= playerY && obj.y <= playerY + 45) {
                 processCollectedItem({ shape: obj.shape, color: obj.color });
                 obj.el.remove();
                 fallingObjects.splice(i, 1);
@@ -455,17 +536,21 @@
         }
     }
 
-    // === EVENT LISTENERS ===
     document.getElementById('btn-start').addEventListener('click', initGame);
-    document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(-1); });
-    document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(1); });
-    document.getElementById('btn-left').addEventListener('mousedown', () => movePlayer(-1));
-    document.getElementById('btn-right').addEventListener('mousedown', () => movePlayer(1));
+    
+    // Controlli ottimizzati per Mobile
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
+    
+    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(-1); });
+    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(1); });
+    btnLeft.addEventListener('mousedown', () => movePlayer(-1));
+    btnRight.addEventListener('mousedown', () => movePlayer(1));
 
     window.addEventListener('keydown', (e) => {
         if (!isPlaying) return;
-        if (e.key === 'ArrowLeft') movePlayer(-1);
-        if (e.key === 'ArrowRight') movePlayer(1);
+        if (e.key === 'ArrowLeft' || e.key === 'a') movePlayer(-1);
+        if (e.key === 'ArrowRight' || e.key === 'd') movePlayer(1);
     });
 
     updateUI();
