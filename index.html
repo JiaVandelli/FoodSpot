@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Magic Runner - Le 4 Sfere</title>
+    <title>Magic Runner - Le 4 Sfere (Hardcore)</title>
     <style>
         /* === STILI GLOBALI === */
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -33,12 +33,12 @@
         }
 
         /* Tremolio schermo */
-        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        .shake { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake {
-            10%, 90% { transform: translate3d(-2px, 0, 0); }
-            20%, 80% { transform: translate3d(4px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
-            40%, 60% { transform: translate3d(6px, 0, 0); }
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-7px, 0, 0); }
+            40%, 60% { transform: translate3d(7px, 0, 0); }
         }
 
         /* === UI SUPERIORE === */
@@ -97,7 +97,7 @@
             background: #000;
             border: 2px solid #8a2be2;
             box-shadow: 0 0 20px #8a2be2, inset 0 0 15px #4c1d95;
-            animation: spin 2s linear infinite;
+            animation: spin 1.5s linear infinite;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
@@ -107,10 +107,10 @@
             border-radius: 50% 0 50% 50%;
             transform: rotate(-45deg);
             box-shadow: 0 0 20px #ff9a9e;
-            animation: flicker 0.5s alternate infinite;
+            animation: flicker 0.4s alternate infinite;
         }
         .falling-object .flame { width: 35px; height: 35px; margin-top: 10px; }
-        @keyframes flicker { 0% { transform: rotate(-45deg) scale(0.9); } 100% { transform: rotate(-45deg) scale(1.1); } }
+        @keyframes flicker { 0% { transform: rotate(-45deg) scale(0.9); } 100% { transform: rotate(-45deg) scale(1.15); } }
 
         /* Scudo Pick-up (Pozione) */
         .shield-pickup {
@@ -125,7 +125,7 @@
             position: relative;
             background: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="white" opacity="0.2"/></svg>');
             background-size: 50px 50px;
-            animation: stars 3s linear infinite;
+            animation: stars 2.5s linear infinite;
             overflow: hidden;
         }
         @keyframes stars { from { background-position: 0 0; } to { background-position: 0 100px; } }
@@ -149,7 +149,7 @@
             border-radius: 10px 10px 25px 25px;
             border-top: 6px solid #4a5568;
             transform: translateX(-50%);
-            transition: left 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: left 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Movimento più reattivo */
             z-index: 5;
             box-shadow: inset 0 -10px 10px rgba(0,0,0,0.5);
             display: flex;
@@ -157,7 +157,7 @@
         }
         /* Effetto scudo sul giocatore */
         #player.has-shield {
-            box-shadow: 0 0 30px #a78bfa, 0 0 10px #7c3aed, inset 0 -10px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 0 35px #a78bfa, 0 0 15px #7c3aed, inset 0 -10px 10px rgba(0,0,0,0.5);
             border-color: #a78bfa;
         }
         /* Il liquido nel calderone */
@@ -169,7 +169,7 @@
             height: 8px;
             background: #8a2be2;
             border-radius: 50%;
-            box-shadow: 0 0 10px #8a2be2;
+            box-shadow: 0 0 15px #8a2be2;
         }
 
         /* === OGGETTI CADENTI === */
@@ -187,17 +187,18 @@
         /* Testo fluttuante */
         .floating-text {
             position: absolute;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             pointer-events: none;
-            animation: floatUp 1s ease-out forwards;
+            animation: floatUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             z-index: 20;
             text-align: center;
-            text-shadow: 0 2px 5px #000;
+            text-shadow: 0 2px 8px #000;
         }
         @keyframes floatUp {
-            0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); }
-            100% { opacity: 0; transform: translate(-50%, -60px) scale(1.1); }
+            0% { opacity: 1; transform: translate(-50%, 0) scale(0.5); }
+            20% { transform: translate(-50%, -15px) scale(1.1); }
+            100% { opacity: 0; transform: translate(-50%, -70px) scale(1); }
         }
 
         /* === CONTROLLI === */
@@ -290,7 +291,7 @@
             🌌 <strong>Buco Nero:</strong> Morte Certa.<br>
             🔥 <strong>Fiamma Magica:</strong> Brucia una tua sfera.<br>
             🛡️ <strong>Scudo:</strong> Ti salva da un Buco Nero.<br><br>
-            <em>C'è sempre una via sicura, cercala!</em>
+            <em>I pericoli sono ovunque, trova la via sicura!</em>
         </p>
         <button id="btn-start">INIZIA RITUALE</button>
     </div>
@@ -304,12 +305,11 @@
     let isPlaying = false;
     let score = 0;
     let playerLane = 1; 
-    let inventory = []; // Conterrà solo i colori univoci raccolti
+    let inventory = []; 
     let hasShield = false;
     let fallingObjects = [];
 
-    // Difficoltà e Loop
-    let currentSpeed = 3.5;
+    let currentSpeed = 4.5; // Partenza leggermente più veloce
     let framesCounter = 0;
     let animationFrameId;
 
@@ -328,7 +328,7 @@
         score = 0;
         playerLane = 1;
         framesCounter = 0;
-        currentSpeed = 4.0;
+        currentSpeed = 4.5;
         
         removeShield();
         updateUI();
@@ -352,32 +352,29 @@
         gameContainer.classList.add('shake');
     }
 
-    // Gestione Scudo
     function applyShield() {
         hasShield = true;
         playerEl.classList.add('has-shield');
         showFloatingText("Scudo Attivo!", "#a78bfa");
     }
+    
     function removeShield() {
         hasShield = false;
         playerEl.classList.remove('has-shield');
     }
 
-    // Collisioni
     function processCollision(entity) {
         if (entity.type === 'sphere') {
             score += 50;
-            // Aggiungi all'inventario solo se il colore non c'è già
             if (!inventory.includes(entity.color)) {
                 inventory.push(entity.color);
                 showFloatingText("+ Sfera", entity.color === 'red' ? '#ff6b6b' : entity.color === 'blue' ? '#4facfe' : entity.color === 'yellow' ? '#fde047' : '#69db7c');
                 
-                // Controllo Vittoria
                 if (inventory.length === WIN_TARGET) {
                     gameWon();
                 }
             } else {
-                showFloatingText("+ Mana (Doppione)", "#fff");
+                showFloatingText("+ Mana", "#fff");
             }
         } 
         else if (entity.type === 'shield') {
@@ -396,7 +393,6 @@
         else if (entity.type === 'flame') {
             shakeScreen();
             if (inventory.length > 0) {
-                // Perde una sfera casuale dall'inventario
                 const randomIndex = Math.floor(Math.random() * inventory.length);
                 const lostColor = inventory.splice(randomIndex, 1)[0];
                 showFloatingText("Sfera Bruciata!", "#ff9a9e");
@@ -430,7 +426,7 @@
         }
     }
 
-    // === LOGICA DI SPAWN (La Regola d'Oro) ===
+    // === LOGICA DI SPAWN ESTREMA ===
     function spawnWave() {
         let availableLanes = [0, 1, 2];
         
@@ -438,17 +434,17 @@
         const safeIndex = Math.floor(Math.random() * availableLanes.length);
         const safeLane = availableLanes.splice(safeIndex, 1)[0];
 
-        // Riempi corsia sicura (25% Sfera, 10% Scudo, 65% Vuoto)
+        // Riempi corsia sicura (30% Sfera, 15% Scudo, 55% Vuoto)
         let rSafe = Math.random();
-        if (rSafe < 0.25) spawnEntity(safeLane, 'sphere');
-        else if (rSafe < 0.35) spawnEntity(safeLane, 'shield');
+        if (rSafe < 0.30) spawnEntity(safeLane, 'sphere');
+        else if (rSafe < 0.45) spawnEntity(safeLane, 'shield');
 
-        // Riempi le altre corsie con pericoli (30% Buco Nero, 15% Fiamma, 15% Sfera)
+        // Riempi le altre corsie con pericoli (45% Buco Nero, 30% Fiamma, 15% Sfera, 10% Vuoto)
         availableLanes.forEach(lane => {
             let rDanger = Math.random();
-            if (rDanger < 0.30) spawnEntity(lane, 'blackhole');
-            else if (rDanger < 0.45) spawnEntity(lane, 'flame');
-            else if (rDanger < 0.60) spawnEntity(lane, 'sphere');
+            if (rDanger < 0.45) spawnEntity(lane, 'blackhole');
+            else if (rDanger < 0.75) spawnEntity(lane, 'flame');
+            else if (rDanger < 0.90) spawnEntity(lane, 'sphere');
         });
     }
 
@@ -502,11 +498,10 @@
         if (!isPlaying) return;
         framesCounter++;
         
-        // Accelerazione progressiva per aumentare la tensione
-        if (framesCounter % 600 === 0) currentSpeed += 0.4;
+        if (framesCounter % 600 === 0) currentSpeed += 0.5;
         
-        // Frequenza di spawn basata sulla velocità
-        let spawnRate = Math.max(50, Math.floor(150 / (currentSpeed/3.5)));
+        // Frequenza di spawn molto più serrata (base passata da 150 a 90)
+        let spawnRate = Math.max(35, Math.floor(90 / (currentSpeed/4.5)));
         if (framesCounter % spawnRate === 0) spawnWave();
 
         const playerY = board.getBoundingClientRect().height - 80; 
@@ -516,7 +511,6 @@
             obj.y += currentSpeed;
             obj.el.style.top = `${obj.y}px`;
 
-            // Hitbox
             if (obj.lane === playerLane && obj.y + 40 >= playerY && obj.y <= playerY + 40) {
                 processCollision(obj);
                 obj.el.remove();
@@ -535,7 +529,6 @@
 
     document.getElementById('btn-start').addEventListener('click', initGame);
     
-    // Controlli Mobile/PC
     const btnLeft = document.getElementById('btn-left');
     const btnRight = document.getElementById('btn-right');
     btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(-1); });
