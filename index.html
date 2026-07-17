@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Magic Runner - Caccia al Boss</title>
+    <title>Magic Runner - Hardcore Edition</title>
     <style>
         /* === STILI GLOBALI === */
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -19,7 +19,6 @@
             touch-action: manipulation;
         }
 
-        /* Contenitore compatto */
         #game-container {
             width: 100%;
             max-width: 380px; 
@@ -33,7 +32,6 @@
             overflow: hidden;
         }
 
-        /* Tremolio schermo */
         .shake { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
         .shake-hard { animation: shakeHard 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake {
@@ -44,28 +42,28 @@
         }
         @keyframes shakeHard {
             0%, 100% { transform: translate3d(0, 0, 0); }
-            20%, 60% { transform: translate3d(12px, 5px, 0); }
-            40%, 80% { transform: translate3d(-12px, -5px, 0); }
+            20%, 60% { transform: translate3d(15px, 5px, 0); }
+            40%, 80% { transform: translate3d(-15px, -5px, 0); }
         }
 
         /* === AURA DEL BOSS === */
         #boss-area {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 120px;
-            background: linear-gradient(to bottom, rgba(220, 38, 38, 0.9), transparent);
+            background: linear-gradient(to bottom, rgba(220, 38, 38, 0.95), transparent);
             display: none;
             justify-content: center;
             align-items: flex-start;
             padding-top: 15px;
             font-size: 28px;
             font-weight: bold;
-            color: #fca5a5;
-            text-shadow: 0 0 15px #dc2626;
+            color: #fff;
+            text-shadow: 0 0 20px #dc2626, 0 0 40px #dc2626;
             z-index: 3;
             letter-spacing: 2px;
-            animation: bossPulse 1s infinite alternate;
+            animation: bossPulse 0.5s infinite alternate;
         }
-        @keyframes bossPulse { 0% { opacity: 0.7; } 100% { opacity: 1; text-shadow: 0 0 25px #ff0000; } }
+        @keyframes bossPulse { 0% { opacity: 0.8; } 100% { opacity: 1; transform: scale(1.02); } }
 
         /* === UI SUPERIORE === */
         #ui-top {
@@ -77,108 +75,78 @@
             z-index: 10;
         }
 
-        #inventory-slots {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-        }
-
+        #inventory-slots { display: flex; justify-content: center; gap: 12px; }
         .slot {
-            width: 40px;
-            height: 40px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 2px solid #4c1d95;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 40px; height: 40px; background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #4c1d95; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
         }
 
         /* === ENTITÀ MAGICHE === */
         .entity-item { width: 35px; height: 35px; border-radius: 50%; }
         .falling-object .entity-item { width: 45px; height: 45px; }
 
-        /* Colori Sfere */
         .color-red { background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a); box-shadow: 0 0 15px #ff6b6b; }
         .color-blue { background: radial-gradient(circle at 30% 30%, #4facfe, #00f2fe); box-shadow: 0 0 15px #4facfe; }
         .color-yellow { background: radial-gradient(circle at 30% 30%, #fde047, #ca8a04); box-shadow: 0 0 15px #fde047; }
         .color-green { background: radial-gradient(circle at 30% 30%, #69db7c, #2b8a3e); box-shadow: 0 0 15px #69db7c; }
 
-        /* Buco Nero & Boss Attack */
         .blackhole {
-            background: #000;
-            border: 2px solid #8a2be2;
-            box-shadow: 0 0 20px #8a2be2;
+            background: #000; border: 2px solid #8a2be2; box-shadow: 0 0 20px #8a2be2;
             animation: spin 1s linear infinite;
         }
+        /* Il Vero Buco Nero del Boss */
         .boss-attack {
-            border-color: #dc2626;
-            box-shadow: 0 0 30px #dc2626, inset 0 0 15px #7f1d1d;
+            border-color: #ff0000;
+            box-shadow: 0 0 30px #ff0000, inset 0 0 20px #7f1d1d;
+            animation: spinFast 0.5s linear infinite;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spinFast { 100% { transform: rotate(-360deg) scale(1.1); } }
 
-        /* Fiamma */
         .flame {
             background: radial-gradient(circle, #ff9a9e 0%, #fecfef 100%);
-            border-radius: 50% 0 50% 50%;
-            transform: rotate(-45deg);
-            box-shadow: 0 0 15px #ff9a9e;
-            animation: flicker 0.3s alternate infinite;
+            border-radius: 50% 0 50% 50%; transform: rotate(-45deg);
+            box-shadow: 0 0 15px #ff9a9e; animation: flicker 0.3s alternate infinite;
         }
         @keyframes flicker { 0% { transform: rotate(-45deg) scale(0.9); } 100% { transform: rotate(-45deg) scale(1.1); } }
 
-        /* Scudo */
         .shield-pickup {
             background: radial-gradient(circle, #a78bfa, #7c3aed);
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
             box-shadow: 0 0 15px #a78bfa;
         }
 
-        /* Clessidra (Nuova) */
         .hourglass {
             background: radial-gradient(circle, #fcd34d, #b45309);
             clip-path: polygon(20% 0%, 80% 0%, 50% 50%, 80% 100%, 20% 100%, 50% 50%);
-            box-shadow: 0 0 20px #fcd34d;
-            animation: floatGlass 1.5s ease-in-out infinite alternate;
+            box-shadow: 0 0 20px #fcd34d; animation: floatGlass 1.5s ease-in-out infinite alternate;
         }
         @keyframes floatGlass { 0% { transform: translateY(-3px) scale(0.95); } 100% { transform: translateY(3px) scale(1.05); } }
 
-        /* Stregone (Fulmine Bianco) */
         .wizard-lightning {
             background: #ffffff;
             clip-path: polygon(30% 0%, 100% 0%, 60% 50%, 90% 50%, 10% 100%, 40% 50%, 10% 50%);
-            box-shadow: 0 0 25px #ffffff, 0 0 40px #ffffff;
-            animation: pulseWhite 0.5s infinite alternate;
+            box-shadow: 0 0 25px #ffffff, 0 0 40px #ffffff; animation: pulseWhite 0.5s infinite alternate;
         }
         @keyframes pulseWhite { 0% { opacity: 0.8; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1.1); } }
 
         /* === CAMPO DI GIOCO === */
         #board {
-            flex-grow: 1;
-            position: relative;
+            flex-grow: 1; position: relative;
             background: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="white" opacity="0.3"/></svg>');
-            background-size: 50px 50px;
-            animation: stars 1.5s linear infinite;
-            overflow: hidden;
+            background-size: 50px 50px; animation: stars 1.5s linear infinite; overflow: hidden;
         }
         @keyframes stars { from { background-position: 0 0; } to { background-position: 0 100px; } }
 
         .lane-divider { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(138, 43, 226, 0.15); }
-        .ld-1 { left: 33.33%; }
-        .ld-2 { left: 66.66%; }
+        .ld-1 { left: 33.33%; } .ld-2 { left: 66.66%; }
 
         /* === IL GIOCATORE === */
         #player {
-            position: absolute;
-            bottom: 40px;
-            width: 45px;
-            height: 35px;
-            background: #2d3748;
-            border-radius: 5px 5px 20px 20px;
-            border-top: 5px solid #4a5568;
-            transform: translateX(-50%);
-            transition: left 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 5;
+            position: absolute; bottom: 40px; width: 45px; height: 35px; background: #2d3748;
+            border-radius: 5px 5px 20px 20px; border-top: 5px solid #4a5568; transform: translateX(-50%);
+            transition: left 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5;
         }
         #player.has-shield { box-shadow: 0 0 30px #a78bfa, 0 0 10px #7c3aed; border-color: #a78bfa; }
         #player::before {
@@ -186,24 +154,18 @@
             background: #8a2be2; border-radius: 50%; left: 5px;
         }
 
-        /* Effetto rallentamento (overlay) */
         #slow-overlay {
-            position: absolute; inset: 0;
-            background: rgba(252, 211, 77, 0.1);
-            pointer-events: none; opacity: 0; z-index: 2;
-            transition: opacity 0.3s;
+            position: absolute; inset: 0; background: rgba(252, 211, 77, 0.1);
+            pointer-events: none; opacity: 0; z-index: 2; transition: opacity 0.3s;
             box-shadow: inset 0 0 50px rgba(252, 211, 77, 0.3);
         }
         #slow-overlay.active { opacity: 1; }
 
         /* === OGGETTI CADENTI === */
         .falling-object {
-            position: absolute;
-            width: 50px; height: 50px;
+            position: absolute; width: 50px; height: 50px;
             display: flex; justify-content: center; align-items: center;
-            transform: translateX(-50%);
-            transition: left 0.15s ease-out;
-            z-index: 4;
+            transform: translateX(-50%); transition: left 0.15s ease-out; z-index: 4;
         }
 
         .floating-text {
@@ -213,9 +175,7 @@
         @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); } 100% { opacity: 0; transform: translate(-50%, -50px) scale(1.1); } }
 
         /* === CONTROLLI === */
-        #controls-wrapper {
-            background: #0b0510; padding: 10px; display: flex; gap: 10px; height: 150px; z-index: 10; border-top: 2px solid #2d1b4e;
-        }
+        #controls-wrapper { background: #0b0510; padding: 10px; display: flex; gap: 10px; height: 150px; z-index: 10; border-top: 2px solid #2d1b4e; }
         button.ctrl-btn {
             flex: 1; font-size: 40px; border: 2px solid #4c1d95; border-radius: 15px; background: #1a0b2e; color: #d8b4fe;
             cursor: pointer; box-shadow: 0 6px 0 #05020a; transition: background 0.1s;
@@ -238,7 +198,7 @@
 <body>
 
 <div id="game-container">
-    <div id="boss-area">ATTACCO BOSS!</div>
+    <div id="boss-area">MORTE CERTA</div>
     <div id="slow-overlay"></div>
 
     <div id="ui-top">
@@ -262,11 +222,11 @@
     </div>
 
     <div id="overlay">
-        <h1 id="overlay-title">RITUALE FINALE</h1>
+        <h1 id="overlay-title">RITUALE ESTREMO</h1>
         <p id="overlay-desc">
-            Niente punti. L'obiettivo è sopravvivere e vincere.<br><br>
+            Le Sfere sono diventate rare.<br><br>
             ⏳ <strong>Clessidra:</strong> Rallenta il tempo.<br>
-            👁️ <strong>Boss:</strong> Ogni 30 secondi. Schiva i colpi per ottenere una Sfera sicura.
+            👁️ <strong>Boss:</strong> Sopravvivi a 10 veri Buchi Neri (ignorano lo scudo) per ottenere una Sfera sicura.
         </p>
         <button id="btn-start">GIOCA</button>
     </div>
@@ -290,12 +250,12 @@
     let framesCounter = 0;
     let animationFrameId;
 
-    // Variabili Boss
+    // Variabili Boss Aggiornate
     let isBossActive = false;
     let bossFrames = 0;
     let bossAttacksFired = 0;
-    const BOSS_MAX_ATTACKS = 7;
-    const BOSS_INTERVAL = 1800; // 30 secondi a ~60 FPS
+    const BOSS_MAX_ATTACKS = 10; // Aumentato a 10 doppi colpi
+    const BOSS_INTERVAL = 1800; 
 
     const board = document.getElementById('board');
     const playerEl = document.getElementById('player');
@@ -355,7 +315,7 @@
     }
 
     function applySlowdown() {
-        speedMultiplier = 0.45; // Rallentamento drastico
+        speedMultiplier = 0.45; 
         slowOverlay.classList.add('active');
         showFloatingText("TEMPO LENTO!", "#fcd34d");
         clearTimeout(slowTimer);
@@ -387,7 +347,10 @@
         }
         else if (entity.type === 'blackhole') {
             shakeScreen(true);
-            if (hasShield) {
+            // Logica del Vero Buco Nero
+            if (entity.isFast) {
+                gameOver("ANNIENTATO!"); // Morte istantanea, ignora lo scudo
+            } else if (hasShield) {
                 removeShield();
                 showFloatingText("Scudo Infranto!", "#ff0000");
             } else {
@@ -429,37 +392,36 @@
         }
     }
 
-    // === SPAWN ONDATE NORMALI ===
+    // === SPAWN ONDATE NORMALI (SFERE DIMEZZATE) ===
     function spawnWave() {
         waveCounterId++;
         let availableLanes = [0, 1, 2];
         
-        // Corsia Sicura (Aggiunta la Clessidra nel pool)
+        // Corsia Sicura: Sfere dimezzate (35%), più spazio vuoto e difese
         const safeIndex = Math.floor(Math.random() * availableLanes.length);
         const safeLane = availableLanes.splice(safeIndex, 1)[0];
         let rSafe = Math.random();
-        if (rSafe < 0.70) spawnEntity(safeLane, 'sphere', waveCounterId);
-        else if (rSafe < 0.85) spawnEntity(safeLane, 'shield', waveCounterId);
-        else if (rSafe < 0.95) spawnEntity(safeLane, 'hourglass', waveCounterId);
+        if (rSafe < 0.35) spawnEntity(safeLane, 'sphere', waveCounterId);
+        else if (rSafe < 0.55) spawnEntity(safeLane, 'shield', waveCounterId);
+        else if (rSafe < 0.70) spawnEntity(safeLane, 'hourglass', waveCounterId);
 
-        // Corsie Pericolose (Incluso lo Stregone)
+        // Corsie Pericolose: Sfere ridotte al 5%, aumentati pericoli
         availableLanes.forEach(lane => {
             let rDanger = Math.random();
-            if (rDanger < 0.40) spawnEntity(lane, 'blackhole', waveCounterId);
-            else if (rDanger < 0.70) spawnEntity(lane, 'flame', waveCounterId);
-            else if (rDanger < 0.85) spawnEntity(lane, 'wizard', waveCounterId); 
+            if (rDanger < 0.45) spawnEntity(lane, 'blackhole', waveCounterId);
+            else if (rDanger < 0.75) spawnEntity(lane, 'flame', waveCounterId);
+            else if (rDanger < 0.95) spawnEntity(lane, 'wizard', waveCounterId); 
             else spawnEntity(lane, 'sphere', waveCounterId); 
         });
     }
 
-    // === LOGICA BOSS ===
+    // === LOGICA BOSS (VERI BUCHI NERI) ===
     function startBossPhase() {
         isBossActive = true;
         bossFrames = 0;
         bossAttacksFired = 0;
         bossArea.style.display = 'flex';
         
-        // Pulisce lo schermo per preparare l'attacco
         fallingObjects.forEach(obj => obj.el.remove());
         fallingObjects = [];
         shakeScreen(true);
@@ -467,11 +429,11 @@
 
     function fireBossAttack() {
         let lanes = [0, 1, 2];
-        let freeLane = Math.floor(Math.random() * 3); // Unica via di scampo
+        let freeLane = Math.floor(Math.random() * 3); 
         
         lanes.forEach(lane => {
             if (lane !== freeLane) {
-                spawnEntity(lane, 'blackhole', -1, true); // true = è un attacco boss (veloce)
+                spawnEntity(lane, 'blackhole', -1, true); 
             }
         });
         shakeScreen();
@@ -481,7 +443,6 @@
         isBossActive = false;
         bossArea.style.display = 'none';
         
-        // Assegna la sfera premio per essere sopravvissuto
         let missingColors = COLORS.filter(c => !inventory.includes(c));
         if (missingColors.length > 0) {
             let colorToGive = missingColors[Math.floor(Math.random() * missingColors.length)];
@@ -524,16 +485,16 @@
         isPlaying = false;
         overlayTitle.innerText = reason;
         overlayTitle.style.color = "#ef4444";
-        overlayDesc.innerHTML = `Sfere Raccolte: ${inventory.length}/4<br>Ritenta, stregone.`;
+        overlayDesc.innerHTML = `Sfere Raccolte: ${inventory.length}/4<br>Il Caos ha vinto.`;
         document.getElementById('btn-start').innerText = "RIPROVA";
         overlay.style.display = 'flex';
     }
 
     function gameWon() {
         isPlaying = false;
-        overlayTitle.innerText = "VITTORIA!";
+        overlayTitle.innerText = "VITTORIA ESTREMA!";
         overlayTitle.style.color = "#fde047";
-        overlayDesc.innerHTML = `Hai raccolto tutte le essenze!<br>Sei sopravvissuto al Caos.`;
+        overlayDesc.innerHTML = `Hai raccolto tutte le essenze!<br>Sei sopravvissuto all'impossibile.`;
         document.getElementById('btn-start').innerText = "NUOVA PARTITA";
         overlay.style.display = 'flex';
     }
@@ -544,24 +505,19 @@
         
         let actualSpeed = currentSpeed * speedMultiplier;
         
-        // Gestione Boss vs Spawn Normale
         if (isBossActive) {
             bossFrames++;
-            // Attacco boss ogni secondo circa (60 frames)
             if (bossFrames % 60 === 0 && bossAttacksFired < BOSS_MAX_ATTACKS) {
                 fireBossAttack();
                 bossAttacksFired++;
             }
             
-            // Controlla la fine della fase boss (quando tutti i colpi sono usciti dallo schermo)
             if (bossAttacksFired >= BOSS_MAX_ATTACKS && fallingObjects.length === 0) {
                 endBossPhase();
             }
         } else {
-            // Aumenta velocità progressivamente col tempo
             if (framesCounter % 600 === 0) currentSpeed += 0.3;
             
-            // Attivazione Boss ogni ~30 secondi
             if (framesCounter % BOSS_INTERVAL === 0 && framesCounter > 0) {
                 startBossPhase();
             } else {
@@ -569,7 +525,6 @@
                 if (framesCounter % spawnRate === 0) spawnWave();
             }
 
-            // === LOGICA STREGONE (Rimescolamento) - Solo se non c'è il boss ===
             if (framesCounter % 30 === 0) {
                 let wavesWithWizard = new Set(fallingObjects.filter(o => o.type === 'wizard').map(o => o.waveId));
                 wavesWithWizard.forEach(wId => {
@@ -583,13 +538,11 @@
             }
         }
 
-        // Muovi gli oggetti
         const playerY = board.getBoundingClientRect().height - 70; 
 
         for (let i = fallingObjects.length - 1; i >= 0; i--) {
             let obj = fallingObjects[i];
             
-            // I colpi del boss vanno ancora più veloci!
             let fallSpeed = obj.isFast ? actualSpeed * 1.6 : actualSpeed;
             obj.y += fallSpeed;
             obj.el.style.top = `${obj.y}px`;
