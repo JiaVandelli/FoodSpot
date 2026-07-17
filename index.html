@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Magic Runner - Le 4 Sfere (Hardcore)</title>
+    <title>Magic Runner - Caos dello Stregone</title>
     <style>
         /* === STILI GLOBALI === */
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
         body {
             font-family: 'Georgia', serif;
-            background-color: #0b0510;
+            background-color: #05020a;
             color: #e2e8f0;
             display: flex;
             justify-content: center;
@@ -19,113 +19,117 @@
             touch-action: manipulation;
         }
 
+        /* Gioco più compatto */
         #game-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 380px; 
             height: 100%;
-            max-height: 800px;
+            max-height: 750px;
             background: linear-gradient(180deg, #1a0b2e 0%, #0b0510 100%);
             position: relative;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 40px rgba(138, 43, 226, 0.4);
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
             overflow: hidden;
         }
 
         /* Tremolio schermo */
-        .shake { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+        .shake { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake {
-            10%, 90% { transform: translate3d(-3px, 0, 0); }
-            20%, 80% { transform: translate3d(5px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-7px, 0, 0); }
-            40%, 60% { transform: translate3d(7px, 0, 0); }
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            25% { transform: translate3d(6px, 0, 0); }
+            50% { transform: translate3d(-6px, 0, 0); }
+            75% { transform: translate3d(6px, 0, 0); }
         }
 
         /* === UI SUPERIORE === */
         #ui-top {
             display: flex;
             flex-direction: column;
-            padding: 15px;
-            background: rgba(26, 11, 46, 0.9);
+            padding: 10px 15px;
+            background: rgba(26, 11, 46, 0.95);
             border-bottom: 2px solid #8a2be2;
             z-index: 10;
-            gap: 15px;
-            box-shadow: 0 4px 20px rgba(138, 43, 226, 0.3);
+            gap: 10px;
         }
 
         #score-container {
             display: flex;
             justify-content: space-between;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #d8b4fe;
-            text-shadow: 0 0 10px #d8b4fe;
         }
 
-        /* Slot per le 4 sfere magiche */
         #inventory-slots {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .slot {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             background: rgba(0, 0, 0, 0.6);
             border: 2px solid #4c1d95;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-            transition: all 0.3s;
         }
 
         /* === ENTITÀ MAGICHE === */
-        .entity-item { width: 30px; height: 30px; border-radius: 50%; }
+        .entity-item { width: 35px; height: 35px; border-radius: 50%; }
         .falling-object .entity-item { width: 45px; height: 45px; }
 
-        /* Colori Sfere Elementali */
-        .color-red { background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a); box-shadow: 0 0 20px #ff6b6b; }
-        .color-blue { background: radial-gradient(circle at 30% 30%, #4facfe, #00f2fe); box-shadow: 0 0 20px #4facfe; }
-        .color-yellow { background: radial-gradient(circle at 30% 30%, #fde047, #ca8a04); box-shadow: 0 0 20px #fde047; }
-        .color-green { background: radial-gradient(circle at 30% 30%, #69db7c, #2b8a3e); box-shadow: 0 0 20px #69db7c; }
+        /* Colori Sfere */
+        .color-red { background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a); box-shadow: 0 0 15px #ff6b6b; }
+        .color-blue { background: radial-gradient(circle at 30% 30%, #4facfe, #00f2fe); box-shadow: 0 0 15px #4facfe; }
+        .color-yellow { background: radial-gradient(circle at 30% 30%, #fde047, #ca8a04); box-shadow: 0 0 15px #fde047; }
+        .color-green { background: radial-gradient(circle at 30% 30%, #69db7c, #2b8a3e); box-shadow: 0 0 15px #69db7c; }
 
         /* Buco Nero */
         .blackhole {
             background: #000;
             border: 2px solid #8a2be2;
-            box-shadow: 0 0 20px #8a2be2, inset 0 0 15px #4c1d95;
-            animation: spin 1.5s linear infinite;
+            box-shadow: 0 0 20px #8a2be2;
+            animation: spin 1s linear infinite;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Fiamma Magica */
+        /* Fiamma */
         .flame {
-            background: radial-gradient(circle, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            background: radial-gradient(circle, #ff9a9e 0%, #fecfef 100%);
             border-radius: 50% 0 50% 50%;
             transform: rotate(-45deg);
-            box-shadow: 0 0 20px #ff9a9e;
-            animation: flicker 0.4s alternate infinite;
+            box-shadow: 0 0 15px #ff9a9e;
+            animation: flicker 0.3s alternate infinite;
         }
-        .falling-object .flame { width: 35px; height: 35px; margin-top: 10px; }
-        @keyframes flicker { 0% { transform: rotate(-45deg) scale(0.9); } 100% { transform: rotate(-45deg) scale(1.15); } }
+        @keyframes flicker { 0% { transform: rotate(-45deg) scale(0.9); } 100% { transform: rotate(-45deg) scale(1.1); } }
 
-        /* Scudo Pick-up (Pozione) */
+        /* Scudo */
         .shield-pickup {
             background: radial-gradient(circle, #a78bfa, #7c3aed);
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
             box-shadow: 0 0 15px #a78bfa;
         }
 
+        /* Stregone (Fulmine Bianco) */
+        .wizard-lightning {
+            background: #ffffff;
+            clip-path: polygon(30% 0%, 100% 0%, 60% 50%, 90% 50%, 10% 100%, 40% 50%, 10% 50%);
+            box-shadow: 0 0 25px #ffffff, 0 0 40px #ffffff;
+            animation: pulseWhite 0.5s infinite alternate;
+        }
+        @keyframes pulseWhite { 0% { opacity: 0.8; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1.1); } }
+
         /* === CAMPO DI GIOCO === */
         #board {
             flex-grow: 1;
             position: relative;
-            background: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="white" opacity="0.2"/></svg>');
+            background: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="white" opacity="0.3"/></svg>');
             background-size: 50px 50px;
-            animation: stars 2.5s linear infinite;
+            animation: stars 1.5s linear infinite; /* Più veloce */
             overflow: hidden;
         }
         @keyframes stars { from { background-position: 0 0; } to { background-position: 0 100px; } }
@@ -134,96 +138,86 @@
             position: absolute;
             top: 0; bottom: 0;
             width: 2px;
-            background: linear-gradient(to bottom, transparent, rgba(138, 43, 226, 0.3), transparent);
+            background: rgba(138, 43, 226, 0.15);
         }
         .ld-1 { left: 33.33%; }
         .ld-2 { left: 66.66%; }
 
-        /* === IL GIOCATORE (Calderone) === */
+        /* === IL GIOCATORE === */
         #player {
             position: absolute;
-            bottom: 60px;
-            width: 50px;
-            height: 40px;
+            bottom: 40px;
+            width: 45px;
+            height: 35px;
             background: #2d3748;
-            border-radius: 10px 10px 25px 25px;
-            border-top: 6px solid #4a5568;
+            border-radius: 5px 5px 20px 20px;
+            border-top: 5px solid #4a5568;
             transform: translateX(-50%);
-            transition: left 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Movimento più reattivo */
+            transition: left 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Scatto fulmineo */
             z-index: 5;
-            box-shadow: inset 0 -10px 10px rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
         }
-        /* Effetto scudo sul giocatore */
         #player.has-shield {
-            box-shadow: 0 0 35px #a78bfa, 0 0 15px #7c3aed, inset 0 -10px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px #a78bfa, 0 0 10px #7c3aed;
             border-color: #a78bfa;
         }
-        /* Il liquido nel calderone */
         #player::before {
             content: '';
             position: absolute;
-            top: -4px;
-            width: 38px;
-            height: 8px;
+            top: -3px; width: 35px; height: 6px;
             background: #8a2be2;
             border-radius: 50%;
-            box-shadow: 0 0 15px #8a2be2;
+            left: 5px;
         }
 
         /* === OGGETTI CADENTI === */
         .falling-object {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
             transform: translateX(-50%);
+            transition: left 0.15s ease-out; /* Animazione fluida quando lo stregone rimescola */
             z-index: 4;
         }
 
-        /* Testo fluttuante */
         .floating-text {
             position: absolute;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             pointer-events: none;
-            animation: floatUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: floatUp 0.8s forwards;
             z-index: 20;
             text-align: center;
-            text-shadow: 0 2px 8px #000;
+            text-shadow: 0 2px 5px #000;
         }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translate(-50%, 0) scale(0.5); }
-            20% { transform: translate(-50%, -15px) scale(1.1); }
-            100% { opacity: 0; transform: translate(-50%, -70px) scale(1); }
-        }
+        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); } 100% { opacity: 0; transform: translate(-50%, -50px) scale(1.1); } }
 
-        /* === CONTROLLI === */
+        /* === CONTROLLI TASTI ALTI === */
         #controls-wrapper {
             background: #0b0510;
-            padding: 15px;
+            padding: 10px;
             display: flex;
-            gap: 15px;
+            gap: 10px;
+            height: 150px; /* Tasti molto più alti per comodità */
             z-index: 10;
             border-top: 2px solid #2d1b4e;
         }
         button.ctrl-btn {
             flex: 1;
-            padding: 20px 0;
-            font-size: 30px;
+            font-size: 40px;
             border: 2px solid #4c1d95;
-            border-radius: 12px;
+            border-radius: 15px;
             background: #1a0b2e;
             color: #d8b4fe;
             cursor: pointer;
-            box-shadow: 0 4px 0 #0b0510;
+            box-shadow: 0 6px 0 #05020a;
+            transition: background 0.1s;
         }
-        button.ctrl-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #0b0510; }
+        button.ctrl-btn:active { transform: translateY(6px); box-shadow: 0 0 0 #0b0510; background: #2d1b4e; }
 
-        /* === OVERLAY MENU === */
+        /* === OVERLAY === */
         #overlay {
             position: absolute;
             inset: 0;
@@ -234,27 +228,19 @@
             align-items: center;
             z-index: 50;
             text-align: center;
-            padding: 20px;
+            padding: 15px;
         }
-        #overlay-title { 
-            font-size: 42px; 
-            margin-bottom: 15px; 
-            color: #d8b4fe; 
-            text-shadow: 0 0 20px #8a2be2;
-        }
-        #overlay p { margin-bottom: 30px; font-size: 16px; color: #a1a1aa; line-height: 1.5; }
-        #overlay span.highlight { color: #fde047; font-weight: bold; }
+        #overlay-title { font-size: 38px; margin-bottom: 10px; color: #d8b4fe; }
+        #overlay p { margin-bottom: 25px; font-size: 14px; color: #a1a1aa; line-height: 1.4; }
         #btn-start {
-            padding: 15px 40px;
-            font-size: 22px;
+            padding: 20px 40px;
+            font-size: 20px;
             font-weight: bold;
-            background: linear-gradient(45deg, #8a2be2, #4c1d95);
-            color: white;
-            border: 2px solid #d8b4fe;
-            border-radius: 25px;
+            background: linear-gradient(45deg, #ffffff, #d8b4fe);
+            color: #0b0510;
+            border: none;
+            border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.5);
-            text-transform: uppercase;
         }
     </style>
 </head>
@@ -263,7 +249,7 @@
 <div id="game-container">
     <div id="ui-top">
         <div id="score-container">
-            <span>Rituale: <span id="score">0</span></span>
+            <span>Mana: <span id="score">0</span></span>
         </div>
         <div id="inventory-slots">
             <div class="slot" id="slot-0"></div>
@@ -285,15 +271,13 @@
     </div>
 
     <div id="overlay">
-        <h1 id="overlay-title">LE 4 SFERE</h1>
+        <h1 id="overlay-title">CAOS MAGICO</h1>
         <p id="overlay-desc">
-            Raccogli una Sfera per ogni colore per <span class="highlight">VINCERE</span>.<br><br>
-            🌌 <strong>Buco Nero:</strong> Morte Certa.<br>
-            🔥 <strong>Fiamma Magica:</strong> Brucia una tua sfera.<br>
-            🛡️ <strong>Scudo:</strong> Ti salva da un Buco Nero.<br><br>
-            <em>I pericoli sono ovunque, trova la via sicura!</em>
+            Vinci con 4 Sfere diverse.<br><br>
+            ⚡ <strong>Fulmine Bianco:</strong> Rimescola la riga! Non farti ingannare.<br>
+            Spazi vuoti quasi inesistenti. Riflessi pronti!
         </p>
-        <button id="btn-start">INIZIA RITUALE</button>
+        <button id="btn-start">GIOCA</button>
     </div>
 </div>
 
@@ -308,8 +292,9 @@
     let inventory = []; 
     let hasShield = false;
     let fallingObjects = [];
+    let waveCounterId = 0;
 
-    let currentSpeed = 4.5; // Partenza leggermente più veloce
+    let currentSpeed = 5.0; // Molto veloce fin da subito
     let framesCounter = 0;
     let animationFrameId;
 
@@ -328,7 +313,8 @@
         score = 0;
         playerLane = 1;
         framesCounter = 0;
-        currentSpeed = 4.5;
+        currentSpeed = 5.0;
+        waveCounterId = 0;
         
         removeShield();
         updateUI();
@@ -355,7 +341,7 @@
     function applyShield() {
         hasShield = true;
         playerEl.classList.add('has-shield');
-        showFloatingText("Scudo Attivo!", "#a78bfa");
+        showFloatingText("Scudo!", "#a78bfa");
     }
     
     function removeShield() {
@@ -369,23 +355,23 @@
             if (!inventory.includes(entity.color)) {
                 inventory.push(entity.color);
                 showFloatingText("+ Sfera", entity.color === 'red' ? '#ff6b6b' : entity.color === 'blue' ? '#4facfe' : entity.color === 'yellow' ? '#fde047' : '#69db7c');
-                
-                if (inventory.length === WIN_TARGET) {
-                    gameWon();
-                }
-            } else {
-                showFloatingText("+ Mana", "#fff");
+                if (inventory.length === WIN_TARGET) gameWon();
             }
         } 
         else if (entity.type === 'shield') {
             score += 20;
             applyShield();
         }
+        else if (entity.type === 'wizard') {
+            shakeScreen();
+            score = Math.max(0, score - 10);
+            showFloatingText("Scossa!", "#ffffff");
+        }
         else if (entity.type === 'blackhole') {
             shakeScreen();
             if (hasShield) {
                 removeShield();
-                showFloatingText("Scudo Infranto!", "#ff0000");
+                showFloatingText("Scudo Rotto!", "#ff0000");
             } else {
                 gameOver("RISUCCHIATO!");
             }
@@ -394,10 +380,8 @@
             shakeScreen();
             if (inventory.length > 0) {
                 const randomIndex = Math.floor(Math.random() * inventory.length);
-                const lostColor = inventory.splice(randomIndex, 1)[0];
-                showFloatingText("Sfera Bruciata!", "#ff9a9e");
-            } else {
-                showFloatingText("Scottatura!", "#ff9a9e");
+                inventory.splice(randomIndex, 1);
+                showFloatingText("- Sfera!", "#ff9a9e");
             }
         }
         updateUI();
@@ -409,6 +393,7 @@
         else if (type === 'blackhole') div.className = `entity-item blackhole`;
         else if (type === 'flame') div.className = `entity-item flame`;
         else if (type === 'shield') div.className = `entity-item shield-pickup`;
+        else if (type === 'wizard') div.className = `entity-item wizard-lightning`;
         return div;
     }
 
@@ -426,43 +411,40 @@
         }
     }
 
-    // === LOGICA DI SPAWN ESTREMA ===
     function spawnWave() {
+        waveCounterId++;
         let availableLanes = [0, 1, 2];
         
-        // Scegli UNA corsia che sarà PER FORZA sicura
+        // Corsia Sicura (Pochissimo vuoto: 85% Sfera, 10% Scudo, solo 5% Vuoto)
         const safeIndex = Math.floor(Math.random() * availableLanes.length);
         const safeLane = availableLanes.splice(safeIndex, 1)[0];
-
-        // Riempi corsia sicura (30% Sfera, 15% Scudo, 55% Vuoto)
         let rSafe = Math.random();
-        if (rSafe < 0.30) spawnEntity(safeLane, 'sphere');
-        else if (rSafe < 0.45) spawnEntity(safeLane, 'shield');
+        if (rSafe < 0.85) spawnEntity(safeLane, 'sphere', waveCounterId);
+        else if (rSafe < 0.95) spawnEntity(safeLane, 'shield', waveCounterId);
 
-        // Riempi le altre corsie con pericoli (45% Buco Nero, 30% Fiamma, 15% Sfera, 10% Vuoto)
+        // Corsie Pericolose (Incluso lo Stregone)
         availableLanes.forEach(lane => {
             let rDanger = Math.random();
-            if (rDanger < 0.45) spawnEntity(lane, 'blackhole');
-            else if (rDanger < 0.75) spawnEntity(lane, 'flame');
-            else if (rDanger < 0.90) spawnEntity(lane, 'sphere');
+            if (rDanger < 0.40) spawnEntity(lane, 'blackhole', waveCounterId);
+            else if (rDanger < 0.70) spawnEntity(lane, 'flame', waveCounterId);
+            else if (rDanger < 0.85) spawnEntity(lane, 'wizard', waveCounterId); // 15% Stregone!
+            else spawnEntity(lane, 'sphere', waveCounterId); // Solo 15% di vuoto totale sulle corsie laterali
         });
     }
 
-    function spawnEntity(lane, type) {
+    function spawnEntity(lane, type, waveId) {
         const el = document.createElement('div');
         el.className = 'falling-object';
         el.style.left = `${LANE_CENTERS[lane]}%`;
-        el.style.top = '-60px';
+        el.style.top = '-50px';
 
         let color = null;
-        if (type === 'sphere') {
-            color = COLORS[Math.floor(Math.random() * COLORS.length)];
-        }
+        if (type === 'sphere') color = COLORS[Math.floor(Math.random() * COLORS.length)];
 
         el.appendChild(createEntityElement(type, color));
         board.appendChild(el);
 
-        fallingObjects.push({ el, lane, type, color, y: -60 });
+        fallingObjects.push({ el, lane, type, color, y: -50, waveId: waveId });
     }
 
     function showFloatingText(text, color) {
@@ -471,26 +453,26 @@
         floatEl.innerText = text;
         floatEl.style.color = color;
         floatEl.style.left = `50%`;
-        floatEl.style.top = `${board.getBoundingClientRect().height - 120}px`;
+        floatEl.style.top = `${board.getBoundingClientRect().height - 150}px`;
         board.appendChild(floatEl);
-        setTimeout(() => floatEl.remove(), 1000);
-    }
-
-    function gameWon() {
-        isPlaying = false;
-        overlayTitle.innerText = "RITUALE COMPIUTO!";
-        overlayTitle.style.color = "#fde047";
-        overlayDesc.innerHTML = `<span style="font-size:24px; color:#fff;">Punteggio: ${score}</span><br><br>Hai raccolto tutte le 4 Essenze Magiche. Sei un maestro stregone!`;
-        document.getElementById('btn-start').innerText = "NUOVA PARTITA";
-        overlay.style.display = 'flex';
+        setTimeout(() => floatEl.remove(), 800);
     }
 
     function gameOver(reason) {
         isPlaying = false;
         overlayTitle.innerText = reason;
         overlayTitle.style.color = "#ef4444";
-        overlayDesc.innerHTML = `<span style="font-size:24px; color:#fff;">Punteggio: ${score}</span><br><br>Sfere Raccolte: ${inventory.length}/4<br>La magia ti ha sopraffatto.`;
+        overlayDesc.innerHTML = `<span style="font-size:24px; color:#fff;">Score: ${score}</span><br>Sfere: ${inventory.length}/4`;
         document.getElementById('btn-start').innerText = "RIPROVA";
+        overlay.style.display = 'flex';
+    }
+
+    function gameWon() {
+        isPlaying = false;
+        overlayTitle.innerText = "VITTORIA!";
+        overlayTitle.style.color = "#fde047";
+        overlayDesc.innerHTML = `<span style="font-size:24px; color:#fff;">Score: ${score}</span><br>Hai dominato il Caos!`;
+        document.getElementById('btn-start').innerText = "NUOVA PARTITA";
         overlay.style.display = 'flex';
     }
 
@@ -498,20 +480,36 @@
         if (!isPlaying) return;
         framesCounter++;
         
-        if (framesCounter % 600 === 0) currentSpeed += 0.5;
+        // Aumenta velocità progressivamente
+        if (framesCounter % 600 === 0) currentSpeed += 0.3;
         
-        // Frequenza di spawn molto più serrata (base passata da 150 a 90)
-        let spawnRate = Math.max(35, Math.floor(90 / (currentSpeed/4.5)));
+        // Cadute ravvicinate: Spawn super frequente
+        let spawnRate = Math.max(25, Math.floor(65 / (currentSpeed/5.0)));
         if (framesCounter % spawnRate === 0) spawnWave();
 
-        const playerY = board.getBoundingClientRect().height - 80; 
+        // === LOGICA STREGONE (Rimescolamento) ===
+        // Ogni 30 frames (0.5s), trova le ondate con un fulmine e rimescola le corsie
+        if (framesCounter % 30 === 0) {
+            let wavesWithWizard = new Set(fallingObjects.filter(o => o.type === 'wizard').map(o => o.waveId));
+            wavesWithWizard.forEach(wId => {
+                let waveObjects = fallingObjects.filter(o => o.waveId === wId);
+                // Mischia le corsie disponibili [0, 1, 2]
+                let newLanes = [0, 1, 2].sort(() => Math.random() - 0.5);
+                waveObjects.forEach((obj, idx) => {
+                    obj.lane = newLanes[idx];
+                    obj.el.style.left = `${LANE_CENTERS[obj.lane]}%`;
+                });
+            });
+        }
+
+        const playerY = board.getBoundingClientRect().height - 70; 
 
         for (let i = fallingObjects.length - 1; i >= 0; i--) {
             let obj = fallingObjects[i];
             obj.y += currentSpeed;
             obj.el.style.top = `${obj.y}px`;
 
-            if (obj.lane === playerLane && obj.y + 40 >= playerY && obj.y <= playerY + 40) {
+            if (obj.lane === playerLane && obj.y + 35 >= playerY && obj.y <= playerY + 35) {
                 processCollision(obj);
                 obj.el.remove();
                 fallingObjects.splice(i, 1);
