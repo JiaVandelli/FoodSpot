@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Magic Runner - Hardcore Edition (Audio & Chameleon)</title>
+    <title>Magic Runner - Hardcore Edition (Fixed & Prism x2)</title>
     <style>
         /* === STILI GLOBALI === */
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -187,7 +187,7 @@
         }
 
         .floating-text {
-            position: absolute; font-size: 20px; font-weight: bold; pointer-events: none;
+            position: absolute; font-size: 18px; font-weight: bold; pointer-events: none;
             animation: floatUp 0.8s forwards; z-index: 20; text-align: center; text-shadow: 0 2px 5px #000;
         }
         @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); } 100% { opacity: 0; transform: translate(-50%, -50px) scale(1.1); } }
@@ -243,7 +243,7 @@
         <h1 id="overlay-title">RITUALE ESTREMO</h1>
         <p id="overlay-desc">
             🦎 <strong>Camaleonte & Fulmine:</strong> Muteranno e colpiranno solo a 1/4 e 3/4 di schermo.<br>
-            💎 <strong>Prisma (x2):</strong> Patto col diavolo! Raddoppia la prossima Sfera o la prossima Fiamma.<br>
+            💎 <strong>Prisma (x2):</strong> Raddoppia QUALSIASI cosa (Sfere, Scudi, Clessidre, Danni e Buchi Neri!).<br>
             👁️ <strong>Boss:</strong> Sopravvivi ai 10 Buchi Neri!
         </p>
         <button id="btn-start">GIOCA</button>
@@ -341,7 +341,7 @@
     let isPlaying = false;
     let playerLane = 1; 
     let inventory = []; 
-    let hasShield = false;
+    let shieldCharges = 0; // Gestione cariche scudo (per scudo x2)
     let hasDoubleEffect = false; // Effetto Prisma x2
     let fallingObjects = [];
     let waveCounterId = 0;
@@ -352,11 +352,13 @@
     let framesCounter = 0;
     let animationFrameId;
 
+    // Timer e variabili Boss Isolati e Bilanciati
     let isBossActive = false;
     let bossFrames = 0;
+    let bossTimer = 0; // Contatore separato per l'intervallo esatto
     let bossAttacksFired = 0;
     const BOSS_MAX_ATTACKS = 10;
-    const BOSS_INTERVAL = 1800; 
+    const BOSS_INTERVAL = 1800; // Esattamente 30 secondi a 60fps
 
     const board = document.getElementById('board');
     const playerEl = document.getElementById('player');
@@ -374,6 +376,7 @@
         inventory = [];
         playerLane = 1;
         framesCounter = 0;
+        bossTimer = 0;
         currentSpeed = 5.0;
         speedMultiplier = 1.0;
         waveCounterId = 0;
@@ -383,7 +386,7 @@
         slowOverlay.classList.remove('active');
         clearTimeout(slowTimer);
 
-        removeShield();
+        removeShield(true);
         removePrism();
         updateUI();
         playerEl.style.left = `${LANE_CENTERS[playerLane]}%`;
@@ -406,15 +409,17 @@
         gameContainer.classList.add(hard ? 'shake-hard' : 'shake');
     }
 
-    function applyShield() {
-        hasShield = true;
+    function applyShield(count = 1) {
+        shieldCharges += count;
         playerEl.classList.add('has-shield');
-        showFloatingText("Scudo!", "#a78bfa");
+        showFloatingText(count > 1 ? `SCUDO x${count}!` : "Scudo!", "#a78bfa");
     }
     
-    function removeShield() {
-        hasShield = false;
-        playerEl.classList.remove('has-shield');
+    function removeShield(resetAll = false) {
+        if (resetAll || shieldCharges <= 0) {
+            shieldCharges = 0;
+            playerEl.classList.remove('has-shield');
+        }
     }
 
     function applyPrism() {
@@ -431,12 +436,14 @@
     function applySlowdown() {
         speedMultiplier = 0.45; 
         slowOverlay.classList.add('active');
-        showFloatingText("TEMPO LENTO!", "#fcd34d");
+        let duration = hasDoubleEffect ? 10000 : 5000;
+        showFloatingText(hasDoubleEffect ? "TEMPO LENTO x2!" : "TEMPO LENTO!", "#fcd34d");
         clearTimeout(slowTimer);
         slowTimer = setTimeout(() => {
             speedMultiplier = 1.0;
             slowOverlay.classList.remove('active');
-        }, 5000);
+        }, duration);
+        if (hasDoubleEffect) removePrism();
     }
 
     function processCollision(entity) {
@@ -445,40 +452,47 @@
 
         if (activeType === 'sphere') {
             SoundManager.sphere();
+            let addedCount = 0;
+
+            // 1. Sfera toccata
             if (!inventory.includes(entity.color)) {
                 inventory.push(entity.color);
-                showFloatingText("+ Sfera", "#fde047");
-                
-                // Effetto Doppio (Prisma): Aggiunge anche un secondo colore mancante se presente!
-                if (hasDoubleEffect) {
-                    let missing = COLORS.filter(c => !inventory.includes(c));
-                    if (missing.length > 0) {
-                        inventory.push(missing[0]);
-                        showFloatingText("DOPPIA SFERA!", "#00ffff");
-                    }
-                    removePrism();
-                }
-                if (inventory.length >= WIN_TARGET) gameWon();
-            } else {
-                showFloatingText("Doppione", "#a1a1aa");
-                if (hasDoubleEffect) removePrism();
+                addedCount++;
             }
+            // 2. Seconda sfera casuale se il Prisma è attivo
+            if (hasDoubleEffect) {
+                let randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+                if (!inventory.includes(randomColor)) {
+                    inventory.push(randomColor);
+                    addedCount++;
+                }
+                if (addedCount === 2) showFloatingText("DOPPIA SFERA (+2)!", "#00ffff");
+                else if (addedCount === 1) showFloatingText("SFERA + DOPPIONE!", "#00ffff");
+                else showFloatingText("DOPPIO DOPPIONE!", "#a1a1aa");
+                
+                removePrism();
+            } else {
+                if (addedCount > 0) showFloatingText("+ Sfera", "#fde047");
+                else showFloatingText("Doppione", "#a1a1aa");
+            }
+
+            if (addedCount > 0 && inventory.length >= WIN_TARGET) gameWon();
         } 
         else if (activeType === 'shield') {
             SoundManager.shield();
-            applyShield();
+            let count = hasDoubleEffect ? 2 : 1;
+            applyShield(count);
             if (hasDoubleEffect) removePrism();
         }
         else if (activeType === 'hourglass') {
             SoundManager.hourglass();
-            applySlowdown();
-            if (hasDoubleEffect) removePrism();
+            applySlowdown(); // Gestisce già il x2 internamente
         }
         else if (activeType === 'wizard') {
             SoundManager.wizard();
             shakeScreen();
             showFloatingText("Scossa!", "#ffffff");
-            if (hasDoubleEffect) removePrism();
+            // Il fulmine non si raddoppia (0x2 = 0), lasciamo invariato
         }
         else if (activeType === 'prism') {
             SoundManager.prism();
@@ -488,11 +502,22 @@
             shakeScreen(true);
             if (entity.isFast) {
                 gameOver("ANNIENTATO!"); 
-            } else if (hasShield) {
-                removeShield();
+            } else if (hasDoubleEffect) {
+                // Buco Nero x2: richiede 2 cariche di scudo per sopravvivere
+                if (shieldCharges >= 2) {
+                    shieldCharges -= 2;
+                    SoundManager.shield();
+                    showFloatingText("Doppio Scudo Infranto!", "#ff0000");
+                    if (shieldCharges === 0) removeShield(true);
+                    removePrism();
+                } else {
+                    gameOver("ANNIENTATO DAL DOPPIO BUCO NERO!");
+                }
+            } else if (shieldCharges >= 1) {
+                shieldCharges -= 1;
                 SoundManager.shield();
                 showFloatingText("Scudo Infranto!", "#ff0000");
-                if (hasDoubleEffect) removePrism();
+                if (shieldCharges === 0) removeShield(true);
             } else {
                 gameOver("RISUCCHIATO!");
             }
@@ -502,7 +527,7 @@
             shakeScreen();
             let lossCount = hasDoubleEffect ? 2 : 1;
             if (hasDoubleEffect) {
-                showFloatingText("DOPPIO DANNO!", "#ff0000");
+                showFloatingText("DOPPIO DANNO (-2)!", "#ff0000");
                 removePrism();
             } else {
                 showFloatingText("- Sfera!", "#ff9a9e");
@@ -637,8 +662,11 @@
         setTimeout(() => floatEl.remove(), 800);
     }
 
+    // Fix Bug #1: Spegne sempre l'area del boss nel Game Over e nel Game Won
     function gameOver(reason) {
         isPlaying = false;
+        isBossActive = false;
+        bossArea.style.display = 'none';
         SoundManager.stopMusic();
         SoundManager.blackhole();
         overlayTitle.innerText = reason;
@@ -650,6 +678,8 @@
 
     function gameWon() {
         isPlaying = false;
+        isBossActive = false;
+        bossArea.style.display = 'none';
         SoundManager.stopMusic();
         SoundManager.win();
         overlayTitle.innerText = "VITTORIA ESTREMA!";
@@ -674,8 +704,12 @@
             if (bossAttacksFired >= BOSS_MAX_ATTACKS && fallingObjects.length === 0) endBossPhase();
         } else {
             if (framesCounter % 600 === 0) currentSpeed += 0.3;
-            if (framesCounter % BOSS_INTERVAL === 0 && framesCounter > 0) {
+            
+            // Fix Bug #3: Contatore isolato che cresce solo durante il gioco normale
+            bossTimer++;
+            if (bossTimer >= BOSS_INTERVAL) {
                 startBossPhase();
+                bossTimer = 0; // Reset esatto al trentesimo secondo
             } else {
                 let spawnRate = Math.max(25, Math.floor(65 / (actualSpeed/5.0)));
                 if (framesCounter % spawnRate === 0) spawnWave();
@@ -720,7 +754,6 @@
         if (obj.type === 'wizard') {
             SoundManager.wizard();
             shakeScreen();
-            // Rimescola le corsie solo degli oggetti di quell'ondata in quel preciso istante
             let waveObjects = fallingObjects.filter(o => o.waveId === obj.waveId);
             let newLanes = [0, 1, 2].sort(() => Math.random() - 0.5);
             waveObjects.forEach((o, idx) => {
@@ -730,7 +763,6 @@
         } 
         else if (obj.type === 'chameleon') {
             SoundManager.chameleon();
-            // Muta in una nuova forma casuale diversa dalla precedente
             let newForm = obj.subForm;
             while (newForm === obj.subForm) {
                 newForm = POSSIBLE_FORMS[Math.floor(Math.random() * POSSIBLE_FORMS.length)];
@@ -738,7 +770,6 @@
             obj.subForm = newForm;
             if (newForm === 'sphere') obj.color = COLORS[Math.floor(Math.random() * COLORS.length)];
             
-            // Aggiorna visivamente l'elemento nel DOM
             obj.el.innerHTML = '';
             obj.el.appendChild(createEntityElement('chameleon', obj.color, false, obj.subForm));
         }
